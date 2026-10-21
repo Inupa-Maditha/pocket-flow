@@ -5,8 +5,8 @@ class MainDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.sizeOf(context).width - 16;
-    double monthlyIncome = 1000.55;
+    double deviceWidth = MediaQuery.sizeOf(context).width - 24;
+    double monthlyIncome = 11000.55;
     double monthlyExpence = 2000;
     double accountBalance = monthlyIncome - monthlyExpence;
     return Column(
@@ -122,7 +122,9 @@ class MainDashboard extends StatelessWidget {
                   height: deviceWidth / 3,
                   width: (deviceWidth - 5) / 2,
                   decoration: BoxDecoration(
-                    color: (accountBalance >= 0) ? Colors.greenAccent : Colors.redAccent,
+                    color: (accountBalance >= 0)
+                        ? const Color.fromARGB(255, 33, 219, 129)
+                        : Colors.redAccent,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -130,7 +132,7 @@ class MainDashboard extends StatelessWidget {
                       Text(
                         'Account Balance',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -143,7 +145,7 @@ class MainDashboard extends StatelessWidget {
                             Text(
                               'LKR :',
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
                               ),

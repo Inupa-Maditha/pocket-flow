@@ -48,12 +48,12 @@ class AnnualExpenseTrendChart extends StatelessWidget {
       children: [
         Text(
           'Annual Monthly Expense Trend',
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 20),
 
         SizedBox(
-          height: 260,
+          height: 220,
           width: double.infinity,
           child: LineChart(
             LineChartData(
@@ -97,7 +97,7 @@ class AnnualExpenseTrendChart extends StatelessWidget {
                 leftTitles: AxisTitles(
                   axisNameWidget: const Text(
                     'LKR',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   axisNameSize: 20,
                   sideTitles: SideTitles(
