@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_flow/pages/home_page.dart';
 import 'package:pocket_flow/pages/add_transaction_page.dart';
-import 'package:pocket_flow/pages/transaction_history_page.dart';
+import 'package:pocket_flow/pages/records_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
-  final List<Widget> _page = [HomePage(), AddTransactionPage(), TransactionHistoryPage()];
+  final List<Widget> _page = [HomePage(), AddTransactionPage(), RecordsPage()];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
