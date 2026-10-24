@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/paddings.dart';
 import 'package:pocket_flow/pages/expenses_record_page.dart';
 import 'package:pocket_flow/pages/income_record_page.dart';
 
@@ -15,7 +16,7 @@ class RecordsPage extends StatelessWidget {
             preferredSize: const Size.fromHeight(44),
             child: Container(
               height: 68,
-              margin: const EdgeInsets.all(12),
+              margin: const EdgeInsets.all(CustomSize.defaultPadding),
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.grey.withAlpha(40),
@@ -36,12 +37,7 @@ class RecordsPage extends StatelessWidget {
             ),
           ),
         ),
-        body: const TabBarView(
-          children: [
-            Center(child: IncomeRecordPage()),
-            Center(child: ExpensesRecordPage()),
-          ],
-        ),
+        body: const TabBarView(children: [IncomeRecordPage(), ExpensesRecordPage()]),
       ),
     );
   }
