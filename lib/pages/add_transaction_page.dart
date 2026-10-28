@@ -26,6 +26,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   late bool isCategoryValid;
   late bool isTitleValid;
   late bool isTimeValid;
+  late bool isExpensePageSelect;
 
   late int _yearControllar;
   late int _monthControllar;
@@ -89,7 +90,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CreateNewCategory()),
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CreateNewCategory(isExpense: isExpensePageSelect),
+                  ),
                 );
               },
               icon: Icon(Icons.add_circle_outline, size: 28, color: Colors.blue),
@@ -135,6 +139,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     isCategoryValid = true;
     isTitleValid = true;
     isTimeValid = true;
+    isExpensePageSelect = true;
   }
 
   @override
@@ -187,6 +192,16 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                                 onTap: (value) {
                                   setState(() {
                                     selectedCategory = null;
+                                    switch (value) {
+                                      case 0:
+                                        isExpensePageSelect = true;
+                                        break;
+                                      case 1:
+                                        isExpensePageSelect = false;
+                                        break;
+                                      default:
+                                        break;
+                                    }
                                   });
                                 },
                                 tabs: [Text('Expense'), Text('Income')],
