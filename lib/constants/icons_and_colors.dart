@@ -1,0 +1,417 @@
+import 'package:flutter/material.dart';
+
+class IconsAndColors {
+  static const List<IconData> incomeIconList = [
+    // Salary & Work
+    Icons.payments,
+    Icons.attach_money,
+    Icons.work,
+    Icons.business_center,
+    Icons.badge,
+    Icons.engineering,
+    Icons.schedule,
+    Icons.more_time,
+
+    // Business & Freelance
+    Icons.storefront,
+    Icons.store,
+    Icons.business,
+    Icons.handshake,
+    Icons.laptop_mac,
+    Icons.design_services,
+    Icons.code,
+    Icons.camera_alt,
+
+    // Investments
+    Icons.trending_up,
+    Icons.show_chart,
+    Icons.bar_chart,
+    Icons.candlestick_chart,
+    Icons.pie_chart,
+    Icons.currency_bitcoin,
+    Icons.account_balance,
+    Icons.savings,
+
+    // Bank & Interest
+    Icons.account_balance_wallet,
+    Icons.credit_card,
+    Icons.percent,
+    Icons.price_check,
+    Icons.currency_exchange,
+
+    // Gifts & Bonus
+    Icons.card_giftcard,
+    Icons.redeem,
+    Icons.celebration,
+    Icons.emoji_events,
+    Icons.stars,
+    Icons.volunteer_activism,
+    Icons.cake,
+
+    // Rent & Property
+    Icons.home_work,
+    Icons.apartment,
+    Icons.real_estate_agent,
+    Icons.key,
+    Icons.house,
+
+    // Sales & Refunds
+    Icons.sell,
+    Icons.local_offer,
+    Icons.shopping_basket,
+    Icons.inventory_2,
+    Icons.receipt,
+    Icons.assignment_return,
+    Icons.undo,
+    Icons.request_quote,
+
+    // Education & Other
+    Icons.school,
+    Icons.menu_book,
+    Icons.military_tech,
+    Icons.family_restroom,
+    Icons.elderly,
+    Icons.diversity_3,
+
+    // Generic
+    Icons.add_circle,
+    Icons.arrow_upward,
+    Icons.south_west,
+    Icons.download,
+    Icons.add_card,
+    Icons.wallet,
+
+    // Money & Currency
+    Icons.paid,
+    Icons.monetization_on,
+    Icons.money,
+    Icons.euro,
+    Icons.currency_rupee,
+    Icons.currency_pound,
+    Icons.currency_yen,
+    Icons.sync_alt,
+    Icons.swap_horiz,
+
+    // Online & Digital Income
+    Icons.language,
+    Icons.public,
+    Icons.cloud,
+    Icons.smartphone,
+    Icons.ads_click,
+    Icons.campaign,
+    Icons.podcasts,
+    Icons.video_library,
+    Icons.video_call,
+    Icons.music_video,
+    Icons.mic,
+    Icons.article,
+    Icons.edit_note,
+    Icons.translate,
+
+    // Creative & Skills
+    Icons.palette,
+    Icons.brush,
+    Icons.draw,
+    Icons.movie_creation,
+    Icons.auto_stories,
+    Icons.lightbulb,
+    Icons.rocket_launch,
+    Icons.workspace_premium,
+
+    // Trades & Services
+    Icons.construction,
+    Icons.hardware,
+    Icons.carpenter,
+    Icons.local_shipping,
+    Icons.delivery_dining,
+    Icons.takeout_dining,
+    Icons.cleaning_services,
+    Icons.local_laundry_service,
+
+    // Agriculture & Nature
+    Icons.agriculture,
+    Icons.grass,
+    Icons.yard,
+    Icons.local_florist,
+    Icons.eco,
+    Icons.solar_power,
+
+    // Analytics & Returns
+    Icons.analytics,
+    Icons.query_stats,
+    Icons.insights,
+    Icons.leaderboard,
+    Icons.balance,
+    Icons.account_tree,
+    Icons.thumb_up,
+  ];
+  static const List<IconData> expenseIconList = [
+    // Food & Dining
+    Icons.lunch_dining,
+    Icons.dinner_dining,
+    Icons.fastfood,
+    Icons.restaurant,
+    Icons.local_cafe,
+    Icons.coffee,
+    Icons.bakery_dining,
+    Icons.ramen_dining,
+    Icons.icecream,
+    Icons.local_pizza,
+    Icons.set_meal,
+    Icons.local_bar,
+    Icons.wine_bar,
+    Icons.cookie,
+    Icons.breakfast_dining,
+    Icons.liquor,
+
+    // Groceries & Shopping
+    Icons.shopping_bag,
+    Icons.shopping_cart,
+    Icons.local_grocery_store,
+    Icons.store_mall_directory,
+    Icons.checkroom,
+    Icons.diamond,
+    Icons.watch,
+    Icons.shopping_basket,
+    Icons.local_mall,
+    Icons.devices,
+    Icons.phone_iphone,
+    Icons.headphones,
+
+    // Travel & Transportation
+    Icons.flight_takeoff,
+    Icons.directions_car,
+    Icons.commute,
+    Icons.local_gas_station,
+    Icons.directions_bus,
+    Icons.train,
+    Icons.subway,
+    Icons.local_taxi,
+    Icons.two_wheeler,
+    Icons.pedal_bike,
+    Icons.directions_boat,
+    Icons.local_parking,
+    Icons.ev_station,
+    Icons.luggage,
+    Icons.hotel,
+    Icons.beach_access,
+    Icons.map,
+    Icons.toll,
+
+    // Leisure & Entertainment
+    Icons.movie,
+    Icons.sports_esports,
+    Icons.music_note,
+    Icons.theater_comedy,
+    Icons.casino,
+    Icons.sports_soccer,
+    Icons.sports_cricket,
+    Icons.sports_basketball,
+    Icons.park,
+    Icons.attractions,
+    Icons.nightlife,
+    Icons.subscriptions,
+    Icons.live_tv,
+    Icons.headset_mic,
+    Icons.book,
+
+    // Bills & Utilities
+    Icons.receipt_long,
+    Icons.bolt,
+    Icons.water_drop,
+    Icons.home,
+    Icons.wifi,
+    Icons.phone,
+    Icons.router,
+    Icons.tv,
+    Icons.local_fire_department,
+    Icons.propane_tank,
+    Icons.cleaning_services,
+    Icons.plumbing,
+    Icons.build,
+    Icons.handyman,
+    Icons.delete,
+    Icons.mail,
+
+    // Health & Fitness
+    Icons.local_hospital,
+    Icons.medication,
+    Icons.medical_services,
+    Icons.healing,
+    Icons.fitness_center,
+    Icons.self_improvement,
+    Icons.spa,
+    Icons.monitor_heart,
+    Icons.vaccines,
+    Icons.psychology,
+
+    // Personal Care & Family
+    Icons.content_cut,
+    Icons.face,
+    Icons.child_care,
+    Icons.pets,
+    Icons.baby_changing_station,
+    Icons.toys,
+    Icons.stroller,
+    Icons.favorite,
+
+    // Education & Work
+    Icons.school,
+    Icons.menu_book,
+    Icons.edit,
+    Icons.print,
+    Icons.work,
+    Icons.computer,
+
+    // Finance & Other
+    Icons.credit_card,
+    Icons.account_balance,
+    Icons.savings,
+    Icons.gavel,
+    Icons.security,
+    Icons.volunteer_activism,
+    Icons.card_giftcard,
+    Icons.church,
+    Icons.more_horiz,
+    Icons.category,
+
+    // Outgoing Transactions
+    Icons.arrow_downward,
+    Icons.north_east,
+    Icons.remove_circle,
+    Icons.money_off,
+    Icons.payment,
+
+    // More Food & Drink
+    Icons.kebab_dining,
+    Icons.rice_bowl,
+    Icons.egg,
+    Icons.soup_kitchen,
+    Icons.tapas,
+    Icons.local_drink,
+    Icons.emoji_food_beverage,
+    Icons.sports_bar,
+    Icons.takeout_dining,
+    Icons.delivery_dining,
+    Icons.cake,
+
+    // Home & Furniture
+    Icons.chair,
+    Icons.bed,
+    Icons.weekend,
+    Icons.kitchen,
+    Icons.microwave,
+    Icons.countertops,
+    Icons.light,
+    Icons.garage,
+    Icons.yard,
+    Icons.cottage,
+    Icons.add_home,
+    Icons.local_laundry_service,
+    Icons.dry_cleaning,
+    Icons.iron,
+
+    // Vehicle
+    Icons.local_car_wash,
+    Icons.car_repair,
+    Icons.tire_repair,
+    Icons.oil_barrel,
+    Icons.airport_shuttle,
+    Icons.local_shipping,
+    Icons.sailing,
+
+    // Sports & Outdoor
+    Icons.sports_tennis,
+    Icons.sports_golf,
+    Icons.sports_martial_arts,
+    Icons.pool,
+    Icons.golf_course,
+    Icons.hiking,
+    Icons.kayaking,
+    Icons.surfing,
+    Icons.snowboarding,
+
+    // Entertainment & Hobbies
+    Icons.festival,
+    Icons.local_activity,
+    Icons.theaters,
+    Icons.piano,
+    Icons.palette,
+    Icons.brush,
+    Icons.photo_camera,
+    Icons.videogame_asset,
+
+    // Education & Kids
+    Icons.local_library,
+    Icons.science,
+    Icons.calculate,
+    Icons.backpack,
+
+    // Health & Safety
+    Icons.local_pharmacy,
+    Icons.health_and_safety,
+    Icons.masks,
+    Icons.sanitizer,
+    Icons.bloodtype,
+    Icons.accessible,
+    Icons.elderly,
+    Icons.diversity_1,
+
+    // Religion & Charity
+    Icons.mosque,
+    Icons.temple_buddhist,
+    Icons.temple_hindu,
+    Icons.synagogue,
+
+    // Phone, Internet & Security
+    Icons.sim_card,
+    Icons.sms,
+    Icons.cell_tower,
+    Icons.lock,
+    Icons.vpn_key,
+
+    // Finance & Legal
+    Icons.currency_exchange,
+    Icons.request_quote,
+    Icons.percent,
+    Icons.account_balance_wallet,
+    Icons.policy,
+    Icons.local_police,
+    Icons.fire_extinguisher,
+  ];
+  static const List<IconData> incomeIconListHome = [
+    Icons.payments,
+    Icons.attach_money,
+    Icons.business_center,
+    Icons.storefront,
+    Icons.store,
+    Icons.laptop_mac,
+    Icons.design_services,
+    Icons.account_balance,
+    Icons.savings,
+  ];
+  static const List<IconData> expenseIconListHome = [
+    Icons.lunch_dining,
+    Icons.shopping_cart,
+    Icons.devices,
+    Icons.commute,
+    Icons.home,
+    Icons.phone,
+    Icons.medical_services,
+    Icons.pets,
+    Icons.school,
+  ];
+  static const List<Color> customColorsHome = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.orange,
+    Colors.purple,
+    Colors.pink,
+    Colors.teal,
+    Colors.indigo,
+    Colors.cyan,
+    Colors.deepOrange,
+    Colors.brown,
+  ];
+}
