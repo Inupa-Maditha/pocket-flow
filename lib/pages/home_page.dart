@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/pages/display_transactions_page.dart';
 import 'package:pocket_flow/widgets/main_dashboard.dart';
 import 'package:pocket_flow/widgets/annual_expense_trend_chart.dart';
 import 'package:pocket_flow/widgets/recent_transaction_card.dart';
@@ -24,7 +25,12 @@ class HomePage extends StatelessWidget {
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DisplayTransactionsPage()),
+                    );
+                  },
                   child: Text(
                     'View All',
                     style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
