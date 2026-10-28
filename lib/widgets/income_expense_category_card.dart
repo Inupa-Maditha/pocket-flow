@@ -2,16 +2,28 @@ import 'package:flutter/material.dart';
 
 class IncomeExpenseCategoryCard extends StatelessWidget {
   final bool isIncome;
-  const IncomeExpenseCategoryCard({super.key, required this.isIncome});
+  final String ammount;
+  final String transactionCount;
+  final String categoryName;
+  final IconData categoryIcon;
+  final Color categoryColor;
+  const IncomeExpenseCategoryCard({
+    super.key,
+    required this.isIncome,
+    required this.ammount,
+    required this.transactionCount,
+    required this.categoryName,
+    required this.categoryIcon,
+    required this.categoryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    double ammount = 28500;
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.withAlpha(40),
+        color: Colors.grey.withAlpha(30),
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Row(
@@ -19,7 +31,7 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Icon(Icons.food_bank, size: 54, color: Colors.blue)],
+            children: [Icon(categoryIcon, size: 54, color: categoryColor)],
           ),
           Expanded(
             child: Padding(
@@ -28,26 +40,30 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Food & Dining',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        'LKR ${ammount.toStringAsFixed(2)}',
+                        categoryName,
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          // ignore: dead_code
-                          color: (isIncome) ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.w500,
+                          color: categoryColor,
                         ),
                       ),
                     ],
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [Text('29 transactions')],
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('$transactionCount transactions'),
+                      Text(
+                        'LKR $ammount',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: (isIncome) ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

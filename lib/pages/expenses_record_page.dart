@@ -28,7 +28,14 @@ class ExpensesRecordPage extends StatelessWidget {
               padding: EdgeInsets.only(bottom: CustomSize.defaultPadding),
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return IncomeExpenseCategoryCard(isIncome: false);
+                return IncomeExpenseCategoryCard(
+                  isIncome: false,
+                  ammount: '28500.00',
+                  transactionCount: '29',
+                  categoryName: 'Food & Dining',
+                  categoryIcon: Icons.food_bank_sharp,
+                  categoryColor: Colors.blueAccent,
+                );
               },
             ),
           ],
