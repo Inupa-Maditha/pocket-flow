@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/pages/monthly_transaction_detail_page.dart';
 
 class IncomeExpenseCategoryCard extends StatelessWidget {
   final bool isIncome;
@@ -73,7 +74,18 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MonthlyTransactionDetailPage(
+                        categoryName: categoryName,
+                        categoryIcon: Icons.lunch_dining,
+                        categoryColor: Colors.amber,
+                      ),
+                    ),
+                  );
+                },
                 icon: Icon(Icons.keyboard_arrow_right, size: 32),
               ),
             ],
