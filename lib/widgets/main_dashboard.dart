@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class MainDashboard extends StatelessWidget {
   const MainDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.sizeOf(context).width - 24;
+    double deviceWidth = max(0.0, MediaQuery.sizeOf(context).width - 24);
     double monthlyIncome = 11000.55;
-    double monthlyExpence = 2000;
-    double accountBalance = monthlyIncome - monthlyExpence;
+    double monthlyExpense = 2000;
+    double accountBalance = monthlyIncome - monthlyExpense;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,8 +31,8 @@ class MainDashboard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  height: (deviceWidth - 10) / 6,
-                  width: (deviceWidth - 5) / 2,
+                  height: max(0.0, (deviceWidth - 10) / 6),
+                  width: max(0.0, (deviceWidth - 5) / 2),
                   decoration: BoxDecoration(color: Colors.green),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -57,12 +58,15 @@ class MainDashboard extends StatelessWidget {
                                 fontSize: 16,
                               ),
                             ),
-                            Text(
-                              monthlyIncome.toStringAsFixed(2),
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                monthlyIncome.toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
                           ],
@@ -73,14 +77,14 @@ class MainDashboard extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 Container(
-                  height: (deviceWidth - 10) / 6,
-                  width: (deviceWidth - 5) / 2,
+                  height: max(0.0, (deviceWidth - 10) / 6),
+                  width: max(0.0, (deviceWidth - 5) / 2),
                   decoration: BoxDecoration(color: Colors.red),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        'Monthly Expence',
+                        'Monthly Expense',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
@@ -101,7 +105,7 @@ class MainDashboard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              monthlyExpence.toStringAsFixed(2),
+                              monthlyExpense.toStringAsFixed(2),
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -119,8 +123,8 @@ class MainDashboard extends StatelessWidget {
             Column(
               children: [
                 Container(
-                  height: deviceWidth / 3,
-                  width: (deviceWidth - 5) / 2,
+                  height: max(0.0, deviceWidth / 3),
+                  width: max(0.0, (deviceWidth - 5) / 2),
                   decoration: BoxDecoration(
                     color: (accountBalance >= 0)
                         ? const Color.fromARGB(255, 33, 219, 129)
