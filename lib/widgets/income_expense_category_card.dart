@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/pages/monthly_transaction_detail_page.dart';
 
 class IncomeExpenseCategoryCard extends StatelessWidget {
@@ -24,8 +25,9 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.withAlpha(30),
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.all(Radius.circular(AppRadius.lg)),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,7 +63,7 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: (isIncome) ? Colors.green : Colors.red,
+                          color: (isIncome) ? AppColors.income : AppColors.expense,
                         ),
                       ),
                     ],
@@ -82,6 +84,7 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
                         categoryName: categoryName,
                         categoryIcon: Icons.lunch_dining,
                         categoryColor: Colors.amber,
+                        isIncome: isIncome,
                       ),
                     ),
                   );

@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 
 class IncomeExpenseBarChart extends StatefulWidget {
   final bool isExpence;
@@ -19,7 +20,7 @@ class _IncomeExpenceBarChartState extends State<IncomeExpenseBarChart> {
         barRods: [
           BarChartRodData(
             toY: y,
-            color: (widget.isExpence) ? Colors.red : Colors.green,
+            color: (widget.isExpence) ? AppColors.expense : AppColors.income,
             width: screenWidth / 24,
             borderRadius: BorderRadius.circular(4),
           ),
@@ -33,8 +34,8 @@ class _IncomeExpenceBarChartState extends State<IncomeExpenseBarChart> {
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Text(
-            "Monthly ${(widget.isExpence) ? "Expence" : "Income"} Chart",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            "Monthly ${(widget.isExpence) ? "Expence" : "Income"} Chart :",
+            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textSecondary),
           ),
         ),
         SizedBox(

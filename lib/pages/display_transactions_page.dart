@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 import 'package:pocket_flow/widgets/transaction_card.dart';
 import 'package:pocket_flow/widgets/transaction_filter_dash_board.dart';
@@ -33,7 +34,7 @@ class _DisplayTransactionsPageState extends State<DisplayTransactionsPage> {
             SizedBox(height: 8),
             Text(
               'View and manage your income and expenses',
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 36),
@@ -57,7 +58,7 @@ class _DisplayTransactionsPageState extends State<DisplayTransactionsPage> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black54,
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ),

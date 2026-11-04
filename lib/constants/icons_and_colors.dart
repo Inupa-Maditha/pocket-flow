@@ -402,16 +402,17 @@ class IconsAndColors {
     Icons.school,
   ];
   static const List<Color> customColorsHome = [
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.pink,
-    Colors.teal,
-    Colors.indigo,
-    Colors.cyan,
-    Colors.deepOrange,
-    Colors.brown,
+    Color(0xFFEF4444),
+    Color(0xFFF97316),
+    Color(0xFFF59E0B),
+    Color(0xFF22C55E),
+    Color(0xFF14B8A6),
+    Color(0xFF06B6D4),
+    Color(0xFF3B82F6),
+    Color(0xFF6366F1),
+    Color(0xFF8B5CF6),
+    Color(0xFFEC4899),
+    Color(0xFF78716C),
+    Color(0xFF64748B),
   ];
 }

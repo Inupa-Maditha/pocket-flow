@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 
 class TransactionCard extends StatelessWidget {
@@ -25,8 +26,9 @@ class TransactionCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(CustomSize.defaultPadding),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious),
-        color: Colors.grey.withAlpha(25),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        color: AppColors.surfaceVariant,
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,14 +45,18 @@ class TransactionCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       Text(
                         '${(isExpense) ? '-' : '+'} LKR $price',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: (isExpense) ? Colors.red : Colors.green,
+                          color: (isExpense) ? AppColors.expense : AppColors.income,
                         ),
                       ),
                     ],
@@ -59,8 +65,14 @@ class TransactionCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(categoryName, style: TextStyle(fontSize: 13)),
-                      Text(dateTime, style: TextStyle(fontSize: 13)),
+                      Text(
+                        categoryName,
+                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                      ),
+                      Text(
+                        dateTime,
+                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                      ),
                     ],
                   ),
                 ],

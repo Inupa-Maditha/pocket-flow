@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 
 class AnnualExpenseTrendChart extends StatelessWidget {
   const AnnualExpenseTrendChart({super.key});
@@ -48,7 +49,10 @@ class AnnualExpenseTrendChart extends StatelessWidget {
       children: [
         Text(
           'Annual Monthly Expense Trend',
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: AppColors.textSecondary,
+          ),
         ),
         const SizedBox(height: 20),
 
@@ -97,7 +101,11 @@ class AnnualExpenseTrendChart extends StatelessWidget {
                 leftTitles: AxisTitles(
                   axisNameWidget: const Text(
                     'LKR',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   axisNameSize: 20,
                   sideTitles: SideTitles(

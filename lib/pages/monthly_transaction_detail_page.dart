@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 
 class MonthlyTransactionDetailPage extends StatefulWidget {
   final String categoryName;
   final IconData categoryIcon;
   final Color categoryColor;
+  final bool isIncome;
   const MonthlyTransactionDetailPage({
     super.key,
     required this.categoryName,
     required this.categoryIcon,
     required this.categoryColor,
+    required this.isIncome,
   });
 
   @override
@@ -204,8 +207,8 @@ class _MonthlyTransactionDetailPageState extends State<MonthlyTransactionDetailP
     List<Map<String, dynamic>> dasboardData = [
       {
         'icon': Icons.account_balance_wallet,
-        'color': Colors.red,
-        'title': 'Total Spent',
+        'color': (widget.isIncome) ? AppColors.income : AppColors.expense,
+        'title': (widget.isIncome) ? 'Total Earned' : 'Total Spent',
         'amount': 'LKR ${totalSpent.toStringAsFixed(2)}',
       },
       {
@@ -231,302 +234,202 @@ class _MonthlyTransactionDetailPageState extends State<MonthlyTransactionDetailP
       appBar: AppBar(title: Text('Monthly Overview')),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: CustomSize.defaultPadding),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 8),
-                padding: EdgeInsets.all(CustomSize.defaultPadding),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious),
-                  color: widget.categoryColor.withAlpha(25),
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: CustomSize.defaultPadding),
-                      child: Icon(
-                        widget.categoryIcon,
-                        color: widget.categoryColor,
-                        size: 54,
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.categoryName,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Text(
-                          'Monthly transaction details',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 8),
+              padding: EdgeInsets.all(CustomSize.defaultPadding),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                color: AppColors.surface,
+                border: Border.all(color: AppColors.border, width: 1),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Row(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      if (DateTime(selectedMonth.year, selectedMonth.month).isAfter(
-                        DateTime(DateTime.now().year - 1, DateTime.now().month),
-                      )) {
-                        setState(() {
-                          selectedMonth = DateTime(
-                            selectedMonth.year,
-                            selectedMonth.month - 1,
-                          );
-                        });
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: Colors.black54),
-                      ),
-                      child: Icon(Icons.keyboard_arrow_left, size: 32),
+                  Padding(
+                    padding: const EdgeInsets.only(right: CustomSize.defaultPadding),
+                    child: Icon(
+                      widget.categoryIcon,
+                      color: widget.categoryColor,
+                      size: 54,
                     ),
                   ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        _showMonthPicker(context);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        margin: EdgeInsets.symmetric(
-                          horizontal: CustomSize.defaultPadding,
-                          vertical: CustomSize.defaultPadding * 2,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            CustomSize.defaultBorderRadious,
-                          ),
-                          border: Border.all(color: Colors.black54),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(Icons.calendar_month, size: 32),
-                            ),
-                            Text(
-                              '${_monthSelector(selectedMonth.month)} ${selectedMonth.year}',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.categoryName,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: widget.categoryColor,
                         ),
                       ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      if (DateTime(
-                        selectedMonth.year,
-                        selectedMonth.month,
-                      ).isBefore(DateTime(DateTime.now().year, DateTime.now().month))) {
-                        setState(() {
-                          selectedMonth = DateTime(
-                            selectedMonth.year,
-                            selectedMonth.month + 1,
-                          );
-                        });
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: Colors.black54),
+                      Text(
+                        'Monthly transaction details',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                      child: Icon(Icons.keyboard_arrow_right, size: 32),
-                    ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(
-                width: double.infinity,
-                child: GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: dasboardData.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2.5,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () {
+                    if (DateTime(
+                      selectedMonth.year,
+                      selectedMonth.month,
+                    ).isAfter(DateTime(DateTime.now().year - 1, DateTime.now().month))) {
+                      setState(() {
+                        selectedMonth = DateTime(
+                          selectedMonth.year,
+                          selectedMonth.month - 1,
+                        );
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                      border: Border.all(color: AppColors.border, width: 1),
+                      color: AppColors.surfaceVariant,
+                    ),
+                    child: Icon(Icons.keyboard_arrow_left, size: 32),
                   ),
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      _showMonthPicker(context);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: CustomSize.defaultPadding,
+                        vertical: CustomSize.defaultPadding * 2,
+                      ),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          CustomSize.defaultBorderRadious,
-                        ),
-                        border: Border.all(color: Colors.black87),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        border: Border.all(color: AppColors.border, width: 1),
+                        color: AppColors.surfaceVariant,
                       ),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                              right: CustomSize.defaultPadding,
-                            ),
-                            child: Icon(
-                              dasboardData[index]['icon'],
-                              color: dasboardData[index]['color'],
-                              size: 36,
-                            ),
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Icon(Icons.calendar_month, size: 32),
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dasboardData[index]['title'],
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              Text(
-                                dasboardData[index]['amount'],
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: (index == 0)
-                                      ? dasboardData[index]['color']
-                                      : Colors.black87,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '${_monthSelector(selectedMonth.month)} ${selectedMonth.year}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  'Transactions',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    ),
                   ),
                 ),
-              ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: trxDetails.length,
-                itemBuilder: (context, index1) {
-                  return Column(
+                InkWell(
+                  onTap: () {
+                    if (DateTime(
+                      selectedMonth.year,
+                      selectedMonth.month,
+                    ).isBefore(DateTime(DateTime.now().year, DateTime.now().month))) {
+                      setState(() {
+                        selectedMonth = DateTime(
+                          selectedMonth.year,
+                          selectedMonth.month + 1,
+                        );
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(color: AppColors.border, width: 1),
+                      color: AppColors.surfaceVariant,
+                    ),
+                    child: Icon(Icons.keyboard_arrow_right, size: 32),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withAlpha(25),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Icon(Icons.calendar_month),
-                            ),
-                            Text(
-                              trxDetails[index1]['date'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        margin: EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                          ),
-                          border: Border.all(color: Colors.grey.withAlpha(45), width: 2),
-                        ),
-                        child: ListView.builder(
-                          itemCount: trxDetails[index1]['transactions'].length,
+                      SizedBox(
+                        width: double.infinity,
+                        child: GridView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemBuilder: (context, index2) {
+                          itemCount: dasboardData.length,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 2.5,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                          ),
+                          itemBuilder: (context, index) {
                             return Container(
-                              margin: EdgeInsets.all(4),
-                              padding: EdgeInsets.all(8),
+                              padding: EdgeInsets.symmetric(horizontal: 8),
                               decoration: BoxDecoration(
-                                color: Colors.grey.withAlpha(25),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(AppRadius.lg),
+                                border: Border.all(color: AppColors.border, width: 1),
+                                color: AppColors.surfaceVariant,
                               ),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 16.0),
+                                    padding: const EdgeInsets.only(
+                                      right: CustomSize.defaultPadding,
+                                    ),
                                     child: Icon(
-                                      trxDetails[index1]['transactions'][index2]['categoryIcon'],
-                                      size: 32,
-                                      color:
-                                          trxDetails[index1]['transactions'][index2]['categoryColor'],
+                                      dasboardData[index]['icon'],
+                                      color: dasboardData[index]['color'],
+                                      size: 36,
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          trxDetails[index1]['transactions'][index2]['title'],
-                                          style: TextStyle(fontWeight: FontWeight.w500),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        dasboardData[index]['title'],
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textSecondary,
                                         ),
-                                        Text(
-                                          trxDetails[index1]['transactions'][index2]['time'],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      '${(!trxDetails[index1]['transactions'][index2]['isIncome']) ? '−' : '+'} LKR ${trxDetails[index1]['transactions'][index2]['amount'].toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        color:
-                                            (!trxDetails[index1]['transactions'][index2]['isIncome'])
-                                            ? Colors.red
-                                            : Colors.green,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
+                                      Text(
+                                        dasboardData[index]['amount'],
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: (index == 0)
+                                              ? dasboardData[index]['color']
+                                              : AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -534,12 +437,142 @@ class _MonthlyTransactionDetailPageState extends State<MonthlyTransactionDetailP
                           },
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          'Transactions :',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: trxDetails.length,
+                        itemBuilder: (context, index1) {
+                          return Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryContainer,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(AppRadius.lg),
+                                    topRight: Radius.circular(AppRadius.lg),
+                                  ),
+                                  border: Border.all(color: AppColors.border, width: 1),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: Icon(
+                                        Icons.calendar_month,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    Text(
+                                      trxDetails[index1]['date'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                margin: EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(AppRadius.lg),
+                                    bottomRight: Radius.circular(AppRadius.lg),
+                                  ),
+                                  border: Border.all(color: AppColors.border, width: 1),
+                                  color: AppColors.surface,
+                                ),
+                                child: ListView.builder(
+                                  itemCount: trxDetails[index1]['transactions'].length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index2) {
+                                    return Container(
+                                      margin: EdgeInsets.all(4),
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.surfaceVariant,
+                                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                                        border: Border.all(
+                                          color: AppColors.border,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(right: 16.0),
+                                            child: Icon(
+                                              trxDetails[index1]['transactions'][index2]['categoryIcon'],
+                                              size: 32,
+                                              color:
+                                                  trxDetails[index1]['transactions'][index2]['categoryColor'],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  trxDetails[index1]['transactions'][index2]['title'],
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: AppColors.textPrimary,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  trxDetails[index1]['transactions'][index2]['time'],
+                                                  style: TextStyle(
+                                                    color: AppColors.textSecondary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 8.0),
+                                            child: Text(
+                                              '${(!trxDetails[index1]['transactions'][index2]['isIncome']) ? '−' : '+'} LKR ${trxDetails[index1]['transactions'][index2]['amount'].toStringAsFixed(2)}',
+                                              style: TextStyle(
+                                                color:
+                                                    (!trxDetails[index1]['transactions'][index2]['isIncome'])
+                                                    ? AppColors.expense
+                                                    : AppColors.income,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ],
-                  );
-                },
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

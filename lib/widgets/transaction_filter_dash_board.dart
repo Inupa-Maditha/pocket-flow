@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 
 class TransactionFilterDashBoard extends StatefulWidget {
@@ -87,14 +88,18 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
     if (icon != null) {
       text.insert(
         0,
-        Icon(icon, color: (isSelected) ? Colors.white : Colors.grey, size: 18),
+        Icon(
+          icon,
+          color: (isSelected) ? AppColors.surface : AppColors.textSecondary,
+          size: 18,
+        ),
       );
     }
     text.add(
       Text(
         title,
         style: TextStyle(
-          color: (isSelected) ? Colors.white : Colors.grey,
+          color: (isSelected) ? AppColors.surface : AppColors.textSecondary,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -103,9 +108,12 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
       padding: EdgeInsets.symmetric(vertical: 10),
       width: deviceWidth / 7 * 2,
       decoration: BoxDecoration(
-        color: (isSelected) ? Colors.blue : Colors.white,
-        borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious),
-        border: Border.all(color: (isSelected) ? Colors.blue : Colors.grey, width: 2),
+        color: (isSelected) ? AppColors.primary : AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: (isSelected) ? AppColors.primary : AppColors.border,
+          width: 1,
+        ),
       ),
       child: Center(
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: text),
@@ -122,9 +130,9 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
     return Container(
       margin: EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious - 6),
-        border: Border.all(color: categoryColor, width: 2),
-        color: Colors.grey.withAlpha(25),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+        border: Border.all(color: AppColors.border, width: 1),
+        color: AppColors.surface,
       ),
       child: Row(
         children: [
@@ -151,7 +159,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                   selectedCategories.removeAt(index);
                 });
               },
-              child: Icon(Icons.close, size: 20, color: Colors.grey),
+              child: Icon(Icons.close, size: 20, color: AppColors.textSecondary),
             ),
           ),
         ],
@@ -192,9 +200,9 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
     return Container(
       padding: EdgeInsets.all(CustomSize.defaultPadding),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious),
-        border: Border.all(color: Colors.grey, width: 2),
-        color: Colors.grey.withAlpha(15),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.border, width: 1),
+        color: AppColors.surface,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,22 +216,30 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                   width: (deviceWidth < 412) ? 226 : deviceWidth * 0.55,
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious),
-                    color: Colors.grey.withAlpha(20),
-                    border: Border.all(color: Colors.grey, width: 2),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    color: AppColors.surfaceVariant,
+                    border: Border.all(color: AppColors.border, width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.calendar_month, size: 16, color: Colors.black54),
+                      Icon(
+                        Icons.calendar_month,
+                        size: 16,
+                        color: AppColors.textSecondary,
+                      ),
                       Text(
                         '${selectedDateRange.start.year},${selectedDateRange.start.month.toString().padLeft(2, '0')},${selectedDateRange.start.day.toString().padLeft(2, '0')} — ${selectedDateRange.end.year},${selectedDateRange.end.month.toString().padLeft(2, '0')},${selectedDateRange.end.day.toString().padLeft(2, '0')}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black54,
+                          color: AppColors.textSecondary,
                         ),
                       ),
-                      Icon(Icons.keyboard_arrow_down, size: 16),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 16,
+                        color: AppColors.textSecondary,
+                      ),
                     ],
                   ),
                 ),
@@ -300,9 +316,9 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                   width: (deviceWidth < 412) ? 123 : deviceWidth * 0.30,
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(CustomSize.defaultBorderRadious),
-                    color: Colors.grey.withAlpha(20),
-                    border: Border.all(color: Colors.grey, width: 2),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    color: AppColors.surfaceVariant,
+                    border: Border.all(color: AppColors.border, width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -314,7 +330,11 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Icon(Icons.keyboard_arrow_down, size: 16),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 16,
+                        color: AppColors.textSecondary,
+                      ),
                     ],
                   ),
                 ),
@@ -427,11 +447,9 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                 padding: EdgeInsets.all(6),
                 width: deviceWidth * 0.7,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    CustomSize.defaultBorderRadious - 4,
-                  ),
-                  border: Border.all(color: Colors.grey, width: 2),
-                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  border: Border.all(color: AppColors.border, width: 1),
+                  color: AppColors.surfaceVariant,
                 ),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -476,7 +494,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                 },
                 child: Text(
                   'Clear all',
-                  style: TextStyle(color: Colors.blue, fontSize: 12),
+                  style: TextStyle(color: AppColors.primary, fontSize: 12),
                 ),
               ),
             ],

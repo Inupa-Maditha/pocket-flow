@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:pocket_flow/constants/app_theme.dart';
 
 class MainDashboard extends StatelessWidget {
   const MainDashboard({super.key});
@@ -20,7 +21,7 @@ class MainDashboard extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 16,
-              color: Colors.black,
+              color: AppColors.textSecondary,
             ),
           ),
         ),
@@ -33,14 +34,18 @@ class MainDashboard extends StatelessWidget {
                 Container(
                   height: max(0.0, (deviceWidth - 10) / 6),
                   width: max(0.0, (deviceWidth - 5) / 2),
-                  decoration: BoxDecoration(color: Colors.green),
+                  decoration: BoxDecoration(
+                    color: AppColors.incomeContainer,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    border: Border.all(color: AppColors.border),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
                         'Monthly Income',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w500,
                           fontSize: 15,
                         ),
@@ -53,7 +58,7 @@ class MainDashboard extends StatelessWidget {
                             Text(
                               'LKR :',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
                               ),
@@ -63,7 +68,7 @@ class MainDashboard extends StatelessWidget {
                               child: Text(
                                 monthlyIncome.toStringAsFixed(2),
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: AppColors.income,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
@@ -79,14 +84,18 @@ class MainDashboard extends StatelessWidget {
                 Container(
                   height: max(0.0, (deviceWidth - 10) / 6),
                   width: max(0.0, (deviceWidth - 5) / 2),
-                  decoration: BoxDecoration(color: Colors.red),
+                  decoration: BoxDecoration(
+                    color: AppColors.expenseContainer,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    border: Border.all(color: AppColors.border),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
                         'Monthly Expense',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w500,
                           fontSize: 15,
                         ),
@@ -99,17 +108,20 @@ class MainDashboard extends StatelessWidget {
                             Text(
                               'LKR :',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
                               ),
                             ),
-                            Text(
-                              monthlyExpense.toStringAsFixed(2),
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                monthlyExpense.toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: AppColors.expense,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
                           ],
@@ -127,8 +139,10 @@ class MainDashboard extends StatelessWidget {
                   width: max(0.0, (deviceWidth - 5) / 2),
                   decoration: BoxDecoration(
                     color: (accountBalance >= 0)
-                        ? const Color.fromARGB(255, 33, 219, 129)
-                        : Colors.redAccent,
+                        ? AppColors.incomeContainer
+                        : AppColors.expenseContainer,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -136,7 +150,7 @@ class MainDashboard extends StatelessWidget {
                       Text(
                         'Account Balance',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -149,17 +163,22 @@ class MainDashboard extends StatelessWidget {
                             Text(
                               'LKR :',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
                               ),
                             ),
-                            Text(
-                              accountBalance.toStringAsFixed(2),
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                accountBalance.toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: (accountBalance >= 0)
+                                      ? AppColors.income
+                                      : AppColors.expense,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
                               ),
                             ),
                           ],

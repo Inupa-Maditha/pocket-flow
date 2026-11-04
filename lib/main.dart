@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/pages/home_page.dart';
 import 'package:pocket_flow/pages/add_transaction_page.dart';
 import 'package:pocket_flow/pages/records_page.dart';
@@ -20,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: buildAppTheme(),
       debugShowCheckedModeBanner: true,
       title: 'pocket flow app',
       home: Scaffold(

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart' as icons;
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/icons_and_colors.dart';
 import 'package:pocket_flow/constants/paddings.dart';
-import 'package:pocket_flow/widgets/income_expense_category_card.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
 class CreateNewCategory extends StatefulWidget {
@@ -56,6 +56,75 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
     setState(() => selectedColor = picked);
   }
 
+  Widget _incomeExpenseCategoryCard(
+    bool isIncome,
+    String categoryName,
+    IconData categoryIcon,
+    Color categoryColor,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.all(Radius.circular(AppRadius.lg)),
+        border: Border.all(color: AppColors.border, width: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Icon(categoryIcon, size: 54, color: categoryColor)],
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        categoryName,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: categoryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'XX transactions',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
+                      Text(
+                        'LKR XXXX',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: (isIncome) ? AppColors.income : AppColors.expense,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [Icon(Icons.keyboard_arrow_right, size: 32)],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -83,26 +152,24 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
-              IncomeExpenseCategoryCard(
-                isIncome: !widget.isExpense,
-                ammount: 'XXXX',
-                transactionCount: 'XX',
-                categoryName: selectedName,
-                categoryIcon: defaultIcon,
-                categoryColor: selectedColor,
+              _incomeExpenseCategoryCard(
+                !widget.isExpense,
+                selectedName,
+                defaultIcon,
+                selectedColor,
               ),
               SizedBox(height: CustomSize.defaultPadding * 2),
               Text(
                 'Icon',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: AppColors.textSecondary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 'Choose an icon for your category',
-                style: TextStyle(color: Colors.black54, fontSize: 14),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               SizedBox(height: CustomSize.defaultPadding),
               SizedBox(
@@ -117,7 +184,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                     crossAxisSpacing: 8,
                   ),
                   itemBuilder: (context, index) {
-                    if ((index < 9)) {
+                    if ((index < customIconsHome.length)) {
                       return IconButton(
                         onPressed: () {
                           setState(() {
@@ -129,8 +196,8 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                           customIconsHome[index],
                           size: 36,
                           color: (selectedIcon != customIconsHome[index])
-                              ? Colors.black38
-                              : Colors.blueAccent,
+                              ? AppColors.textDisabled
+                              : AppColors.primary,
                         ),
                       );
                     } else {
@@ -143,7 +210,10 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                               return StatefulBuilder(
                                 builder: (context, setDialogState) {
                                   return AlertDialog(
-                                    title: const Text('Select Icon'),
+                                    title: const Text(
+                                      'Select Icon',
+                                      style: TextStyle(color: AppColors.textPrimary),
+                                    ),
                                     content: SizedBox(
                                       width: double.maxFinite,
                                       height: MediaQuery.of(context).size.height * 1 / 3,
@@ -166,8 +236,8 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                                               customIcons[index],
                                               size: 36,
                                               color: (selectedIcon != customIcons[index])
-                                                  ? Colors.black38
-                                                  : Colors.blueAccent,
+                                                  ? AppColors.textDisabled
+                                                  : AppColors.primary,
                                             ),
                                           );
                                         },
@@ -202,7 +272,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                         icon: Icon(
                           icons.CupertinoIcons.ellipsis_circle,
                           size: 36,
-                          color: Colors.black,
+                          color: AppColors.textPrimary,
                         ),
                       );
                     }
@@ -213,19 +283,19 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
               Text(
                 'Color',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: AppColors.textSecondary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 'Choose a color for your category',
-                style: TextStyle(color: Colors.black54, fontSize: 14),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               SizedBox(height: CustomSize.defaultPadding),
               SizedBox(
                 child: GridView.builder(
-                  itemCount: 12,
+                  itemCount: IconsAndColors.customColorsHome.length + 1,
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -234,7 +304,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                     crossAxisSpacing: (deviceWidth - 206) / 10,
                   ),
                   itemBuilder: (context, index) {
-                    if ((index < 11)) {
+                    if ((index < IconsAndColors.customColorsHome.length)) {
                       return InkWell(
                         onTap: () {
                           setState(() {
@@ -245,13 +315,13 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                           width: 46,
                           height: 46,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
+                            borderRadius: BorderRadius.circular(AppRadius.full),
                             border: Border.all(
                               color:
                                   (selectedColor !=
                                       IconsAndColors.customColorsHome[index])
                                   ? Colors.transparent
-                                  : Colors.black,
+                                  : AppColors.textPrimary,
                               width: 3,
                             ),
                           ),
@@ -259,7 +329,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
+                              borderRadius: BorderRadius.circular(AppRadius.full),
                               border: Border.all(color: Colors.white, width: 3),
                               color: IconsAndColors.customColorsHome[index],
                             ),
@@ -267,7 +337,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                                 ((selectedColor !=
                                     IconsAndColors.customColorsHome[index]))
                                 ? Icon(Icons.done, color: Colors.transparent)
-                                : Icon(Icons.done, color: Colors.black),
+                                : Icon(Icons.done, color: AppColors.textPrimary),
                           ),
                         ),
                       );
@@ -279,7 +349,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                         child: Icon(
                           icons.CupertinoIcons.ellipsis_circle,
                           size: 44,
-                          color: Colors.black,
+                          color: AppColors.textPrimary,
                         ),
                       );
                     }
@@ -290,14 +360,14 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
               Text(
                 'Category Name',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: AppColors.textSecondary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 'Enter a name for your category',
-                style: TextStyle(color: Colors.black54, fontSize: 14),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               SizedBox(height: CustomSize.defaultPadding),
               SizedBox(
@@ -316,12 +386,12 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                     hint: Text(
                       'SHORT EATS AND BEVERAGES',
                       textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
-                    fillColor: Colors.grey.withAlpha(60),
+                    fillColor: AppColors.surfaceVariant,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
+                      borderSide: BorderSide(color: AppColors.border),
                     ),
                   ),
                 ),
@@ -329,7 +399,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
               Text(
                 'Use only English letters, numbers, spaces, _ and -',
                 style: TextStyle(
-                  color: (isValidCategoryName) ? Colors.transparent : Colors.red,
+                  color: (isValidCategoryName) ? Colors.transparent : AppColors.expense,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -351,8 +421,8 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                           duration: const Duration(seconds: 1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8),
+                              topLeft: Radius.circular(AppRadius.sm),
+                              topRight: Radius.circular(AppRadius.sm),
                             ),
                           ),
                         ),
@@ -376,9 +446,9 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                     width: deviceWidth,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.blueAccent.withAlpha(40),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue, width: 2),
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: AppColors.border, width: 1),
                     ),
                     child: icons.Center(
                       child: Text(
@@ -386,7 +456,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black54,
+                          color: AppColors.surface,
                         ),
                       ),
                     ),
