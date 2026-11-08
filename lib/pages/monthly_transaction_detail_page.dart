@@ -307,37 +307,40 @@ class _MonthlyTransactionDetailPageState extends State<MonthlyTransactionDetailP
                   ),
                 ),
                 Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      _showMonthPicker(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      margin: EdgeInsets.symmetric(
-                        horizontal: CustomSize.defaultPadding,
-                        vertical: CustomSize.defaultPadding * 2,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(color: AppColors.border, width: 1),
-                        color: AppColors.surfaceVariant,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Icon(Icons.calendar_month, size: 32),
-                          ),
-                          Text(
-                            '${_monthSelector(selectedMonth.month)} ${selectedMonth.year}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: CustomSize.defaultPadding,
+                      vertical: CustomSize.defaultPadding * 2,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        _showMonthPicker(context);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          border: Border.all(color: AppColors.border, width: 1),
+                          color: AppColors.surfaceVariant,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(Icons.calendar_month, size: 32),
                             ),
-                          ),
-                        ],
+                            Text(
+                              '${_monthSelector(selectedMonth.month)} ${selectedMonth.year}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
