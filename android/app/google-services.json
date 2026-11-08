@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "269653628040",
+    "project_id": "pocket-flow-724af",
+    "storage_bucket": "pocket-flow-724af.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269653628040:android:060722411e951e58177b3d",
+        "android_client_info": {
+          "package_name": "com.example.pocket_flow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "269653628040-60pcnpiae9ohdvpsmen112u12jmkopvr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pocket_flow",
+            "certificate_hash": "83d2e5083510acd50740ca7293cf8ee7f81c5712"
+          }
+        },
+        {
+          "client_id": "269653628040-lla7v0geml9eojc7kellosbqgv9g5kmm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfVMv8wWDgd2TNawk0F9ytVXcqkSrmmcQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "269653628040-lla7v0geml9eojc7kellosbqgv9g5kmm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "269653628040-9icbib6t8p83acj22du5370jr6d5nphs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pocketFlow"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
