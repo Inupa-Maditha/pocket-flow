@@ -191,6 +191,7 @@ class SignInFormState extends State<SignInForm> {
   late bool isPasswordValid;
   late bool isEmailValid;
   late int buttonID;
+  late bool isGoogleButtonActive;
 
   Widget _buttonSelector(int buttonId) {
     switch (buttonId) {
@@ -268,9 +269,67 @@ class SignInFormState extends State<SignInForm> {
     }
   }
 
+  Widget _googleButtonActivator(bool isActive) {
+    if (isActive) {
+      return OutlinedButton(
+        onPressed: () async {
+          setState(() {
+            isGoogleButtonActive = false;
+          });
+          final result = await AuthService.signInWithGoogle();
+          if (result && mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const RoutePage()),
+              (route) => false,
+            );
+          } else {
+            setState(() {
+              isGoogleButtonActive = true;
+            });
+            Fluttertoast.showToast(
+              msg: 'ERROR: try again',
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.TOP,
+              timeInSecForIosWeb: 3,
+              backgroundColor: AppColors.expenseContainer,
+              textColor: AppColors.expense,
+              fontSize: 16.0,
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.surface,
+          foregroundColor: AppColors.textPrimary,
+          side: BorderSide(color: AppColors.border, width: 1),
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Image.asset('assets/google_logo.png', height: 22),
+            const SizedBox(width: 10),
+            const Text('Login with Google'),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: double.infinity,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    isGoogleButtonActive = true;
     isPasswordValid = false;
     isEmailValid = false;
     buttonID = 0;
@@ -365,30 +424,7 @@ class SignInFormState extends State<SignInForm> {
           ],
         ),
         SizedBox(height: CustomSize.defaultPadding),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => RoutePage()));
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.surface,
-            foregroundColor: AppColors.textPrimary,
-            side: BorderSide(color: AppColors.border, width: 1),
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Image.asset('assets/google_logo.png', height: 22),
-              const SizedBox(width: 10),
-              const Text('Login with Google'),
-            ],
-          ),
-        ),
+        _googleButtonActivator(isGoogleButtonActive),
         Padding(
           padding: const EdgeInsets.only(top: CustomSize.defaultPadding),
           child: Row(
