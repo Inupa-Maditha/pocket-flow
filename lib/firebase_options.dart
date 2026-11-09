@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     projectId: 'pocket-flow-724af',
     storageBucket: 'pocket-flow-724af.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDkKOcJFEF0pbuWTNXfxg0JOZX1HnlFKnQ',
     appId: '1:269653628040:ios:56a8100374f05a27177b3d',
@@ -68,7 +67,6 @@ class DefaultFirebaseOptions {
     iosClientId: '269653628040-9icbib6t8p83acj22du5370jr6d5nphs.apps.googleusercontent.com',
     iosBundleId: 'com.example.pocketFlow',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDkKOcJFEF0pbuWTNXfxg0JOZX1HnlFKnQ',
     appId: '1:269653628040:ios:56a8100374f05a27177b3d',

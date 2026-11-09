@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pocket_flow/constants/app_theme.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   static Future<bool> emailRegistration(String email, String password) async {
@@ -13,20 +11,7 @@ class AuthService {
         await userCredential.user!.sendEmailVerification();
       }
       return true;
-    } on FirebaseException catch (e) {
-      debugPrint('FIREBASE ERROR: ${e.code} | ${e.message}');
-      return false;
     } catch (e) {
-      debugPrint('OTHER ERROR: $e');
-      await Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.TOP,
-        timeInSecForIosWeb: 3,
-        backgroundColor: AppColors.primaryContainer,
-        textColor: AppColors.textPrimary,
-        fontSize: 16.0,
-      );
       return false;
     }
   }
@@ -55,6 +40,19 @@ class AuthService {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> signInWithGoogle() async {
+    try {
+      await GoogleSignIn.instance.initialize();
+      final idToken = (await GoogleSignIn.instance.authenticate()).authentication.idToken;
+      await FirebaseAuth.instance.signInWithCredential(
+        GoogleAuthProvider.credential(idToken: idToken),
       );
       return true;
     } catch (e) {
