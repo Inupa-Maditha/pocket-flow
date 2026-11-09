@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/firebase_options.dart';
 import 'package:pocket_flow/pages/login_register_page.dart';
 import 'package:pocket_flow/pages/route_page.dart';
@@ -21,6 +22,11 @@ class _MyAppState extends State<MyApp> {
   bool isValidUser = false;
   @override
   Widget build(BuildContext context) {
-    return (isValidUser) ? RoutePage() : LoginRegisterPage();
+    return MaterialApp(
+      theme: buildAppTheme(),
+      debugShowCheckedModeBanner: true,
+      title: 'pocket flow app',
+      home: (isValidUser) ? RoutePage() : LoginRegisterPage(),
+    );
   }
 }

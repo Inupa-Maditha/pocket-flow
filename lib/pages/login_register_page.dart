@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 import 'package:pocket_flow/pages/route_page.dart';
+import 'package:pocket_flow/services/auth_service.dart';
 
 class LoginRegisterPage extends StatefulWidget {
   final Widget page;
@@ -15,65 +19,66 @@ class LoginRegisterPage extends StatefulWidget {
 class _LoginRegisterPageState extends State<LoginRegisterPage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: buildAppTheme(),
-      debugShowCheckedModeBanner: true,
-      title: 'pocket flow app',
-      home: Scaffold(
-        body: Stack(
-          children: [
-            Positioned(top: -90, left: -70, child: Bubble(size: 0.6)),
-            Positioned(top: 60, right: -90, child: Bubble(size: 0.4)),
-            Positioned(bottom: -100, right: -100, child: Bubble(size: 0.7)),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: CustomSize.defaultPadding,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet_rounded,
-                      size: 76,
-                      color: AppColors.primary,
-                    ),
-                    SizedBox(height: CustomSize.defaultPadding),
-                    Text(
-                      'Pocket Flow',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 28,
-                        color: AppColors.textPrimary,
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(top: -90, left: -70, child: Bubble(size: 0.6)),
+          Positioned(top: 60, right: -90, child: Bubble(size: 0.4)),
+          Positioned(bottom: -100, right: -100, child: Bubble(size: 0.7)),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: CustomSize.defaultPadding,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.account_balance_wallet_rounded,
+                        size: 76,
+                        color: AppColors.primary,
                       ),
-                    ),
-                    Text(
-                      'Track • Manage • Grow',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
+                      SizedBox(height: CustomSize.defaultPadding),
+                      Text(
+                        'Pocket Flow',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 28,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: CustomSize.defaultPadding),
-                    Container(
-                      padding: EdgeInsets.all(CustomSize.defaultPadding * 2),
-                      margin: EdgeInsets.all(CustomSize.defaultPadding),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
-                        border: Border.all(color: AppColors.border, width: 1),
-                        color: AppColors.surface,
+                      Text(
+                        'Track • Manage • Grow',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
                       ),
-                      child: widget.page,
-                    ),
-                  ],
+                      SizedBox(height: CustomSize.defaultPadding),
+                      SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.all(CustomSize.defaultPadding * 2),
+                          margin: EdgeInsets.all(CustomSize.defaultPadding),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            border: Border.all(color: AppColors.border, width: 1),
+                            color: AppColors.surface,
+                          ),
+                          child: widget.page,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -185,12 +190,90 @@ class SignInFormState extends State<SignInForm> {
 
   late bool isPasswordValid;
   late bool isEmailValid;
+  late int buttonID;
+
+  Widget _buttonSelector(int buttonId) {
+    switch (buttonId) {
+      case 0:
+        return ElevatedButton(
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              setState(() {
+                buttonID = 1;
+              });
+              final bool isUserVerified = await AuthService.isUserVerified(
+                _emailController.text,
+                _passwordController.text,
+              );
+              if (mounted) {
+                setState(() {
+                  buttonID = 0;
+                });
+                if (isUserVerified) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Successfully logged in'),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(AppRadius.sm),
+                          topRight: Radius.circular(AppRadius.sm),
+                        ),
+                      ),
+                    ),
+                  );
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RoutePage()),
+                    (Route<dynamic> route) => false,
+                  );
+                } else {
+                  Fluttertoast.showToast(
+                    msg: 'ERROR: user does not exist',
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 3,
+                    backgroundColor: AppColors.expenseContainer,
+                    textColor: AppColors.expense,
+                    fontSize: 16.0,
+                  );
+                }
+              }
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.surface,
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [Text('Login'), Icon(Icons.arrow_right)],
+          ),
+        );
+      case 1:
+        return SizedBox(
+          width: double.infinity,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      default:
+        return SizedBox.shrink();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     isPasswordValid = false;
     isEmailValid = false;
+    buttonID = 0;
   }
 
   @override
@@ -252,9 +335,7 @@ class SignInFormState extends State<SignInForm> {
                       return 'upper & lowercase, number, symbol, 5+ characters';
                     }
                   },
-                  onSaved: (String? p1) {
-                    _passwordController.text = '';
-                  },
+                  onSaved: (String? p1) {},
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -263,36 +344,7 @@ class SignInFormState extends State<SignInForm> {
                     TextButton(onPressed: () {}, child: Text('Forget Password?')),
                   ],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('Done')));
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RoutePage()),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.surface,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                    textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [Text('Login'), Icon(Icons.arrow_right)],
-                  ),
-                ),
+                _buttonSelector(buttonID),
               ],
             ),
           ),
@@ -382,6 +434,8 @@ class _SignUpFormState extends State<SignUpForm> {
   late bool isEmailValid;
   late bool isNameValid;
 
+  late bool isShowButton;
+
   @override
   void initState() {
     super.initState();
@@ -389,6 +443,7 @@ class _SignUpFormState extends State<SignUpForm> {
     isPasswordsMatch = false;
     isEmailValid = false;
     isNameValid = false;
+    isShowButton = true;
   }
 
   @override
@@ -430,9 +485,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       return 'Enter a valid name';
                     }
                   },
-                  onSaved: (String? p1) {
-                    _nameController.text = '';
-                  },
+                  onSaved: (String? p1) {},
                 ),
                 InputBox(
                   controller: _emailController,
@@ -468,9 +521,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       return 'upper & lowercase, number, symbol, 5+ characters';
                     }
                   },
-                  onSaved: (String? p1) {
-                    _passwordController.text = '';
-                  },
+                  onSaved: (String? p1) {},
                 ),
                 InputBox(
                   controller: _confirmPasswordController,
@@ -485,44 +536,70 @@ class _SignUpFormState extends State<SignUpForm> {
                       return 'Password does not match';
                     }
                   },
-                  onSaved: (String? p1) {
-                    _confirmPasswordController.text = '';
-                  },
+                  onSaved: (String? p1) {},
                 ),
                 SizedBox(height: CustomSize.defaultPadding),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
+                (!isShowButton)
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              isShowButton = false;
+                            });
+                            final bool isSuccess;
+                            _formKey.currentState!.save();
+                            isSuccess = await AuthService.emailRegistration(
+                              _emailController.text,
+                              _passwordController.text,
+                            );
+                            setState(() {
+                              isShowButton = true;
+                            });
 
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('Done')));
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginRegisterPage(
-                            page: EmailVerifyWidget(email: _emailController.text),
+                            if (isSuccess && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Verification email was sent'),
+                                  backgroundColor: Colors.green,
+                                  duration: const Duration(seconds: 3),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(AppRadius.sm),
+                                      topRight: Radius.circular(AppRadius.sm),
+                                    ),
+                                  ),
+                                ),
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginRegisterPage(
+                                    page: EmailVerifyWidget(email: _emailController.text),
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.surface,
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.lg),
                           ),
                         ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.surface,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                    textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [Text('Create Account'), Icon(Icons.arrow_right)],
-                  ),
-                ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [Text('Create Account'), Icon(Icons.arrow_right)],
+                        ),
+                      ),
               ],
             ),
           ),
@@ -562,43 +639,53 @@ class EmailVerifyWidget extends StatefulWidget {
 }
 
 class _EmailVerifyWidgetState extends State<EmailVerifyWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Verify your email',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          'We sent a verification link to ${widget.email}. Open it,then come back here.',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        SizedBox(height: CustomSize.defaultPadding),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => RoutePage()));
+  Timer? timer;
+  Timer? timer2;
+  late int buttonID;
+  late int countDown;
+
+  Widget _button(int buttonId) {
+    switch (buttonId) {
+      case 0:
+        return OutlinedButton(
+          onPressed: () async {
+            setState(() {
+              buttonID = 1;
+            });
+            final bool resendEmail = await AuthService.resendVerificationEmail();
+            if (mounted) {
+              if (!resendEmail) {
+                setState(() {
+                  buttonID = 0;
+                });
+                Fluttertoast.showToast(
+                  msg: 'ERROR: try again',
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 3,
+                  backgroundColor: AppColors.expenseContainer,
+                  textColor: AppColors.expense,
+                  fontSize: 16.0,
+                );
+              } else {
+                setState(() {
+                  buttonID = 2;
+                  countDown = 59;
+                });
+                timer2 = Timer.periodic(Duration(seconds: 1), (timer) {
+                  (countDown > 0)
+                      ? setState(() {
+                          countDown -= 1;
+                        })
+                      : setState(() {
+                          timer2!.cancel();
+                          buttonID = 0;
+                        });
+                });
+              }
+            }
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.surface,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [Text("I've verified"), Icon(Icons.arrow_right)],
-          ),
-        ),
-        SizedBox(height: CustomSize.defaultPadding),
-        OutlinedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
+          style: OutlinedButton.styleFrom(
             backgroundColor: AppColors.surface,
             foregroundColor: AppColors.primary,
             side: BorderSide(color: AppColors.border, width: 1),
@@ -613,18 +700,95 @@ class _EmailVerifyWidgetState extends State<EmailVerifyWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [const Text('Resend verification email')],
           ),
+        );
+      case 1:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [CircularProgressIndicator()],
+        );
+      case 2:
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.border, width: 1),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            color: AppColors.surface,
+          ),
+          child: Text(
+            '00 : ${countDown.toString().padLeft(2, '0')}',
+            style: TextStyle(
+              color: AppColors.primary,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        );
+      default:
+        return SizedBox.shrink();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      final verified = await AuthService.isEmailVerified();
+      if (!verified || !mounted) return;
+
+      timer?.cancel();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const RoutePage()),
+        (route) => false,
+      );
+    });
+    buttonID = 0;
+    countDown = 0;
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    timer2?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Verify your email',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        Text(
+          'We sent a verification link to ${widget.email} \nOpen it,then come back here.',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
+        SizedBox(height: CustomSize.defaultPadding),
+        _button(buttonID),
         SizedBox(height: CustomSize.defaultPadding),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                try {
+                  await FirebaseAuth.instance.currentUser?.delete();
+                } on FirebaseAuthException {
+                  await FirebaseAuth.instance.signOut();
+                }
+                if (!context.mounted) return;
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginRegisterPage(page: SignUpForm()),
+                    builder: (_) => LoginRegisterPage(page: SignUpForm()),
                   ),
+                  (route) => false,
                 );
               },
               child: Text(
