@@ -400,7 +400,51 @@ class SignInFormState extends State<SignInForm> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    TextButton(onPressed: () {}, child: Text('Forget Password?')),
+                    TextButton(
+                      onPressed: () async {
+                        if (_emailController.text.isEmpty) {
+                          Fluttertoast.showToast(
+                            msg: 'ERROR: please enter email',
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 3,
+                            backgroundColor: AppColors.expenseContainer,
+                            textColor: AppColors.expense,
+                            fontSize: 16.0,
+                          );
+                        } else {
+                          final result = await AuthService.resetPassword(
+                            _emailController.text,
+                          );
+                          if (result && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('Password reset email was sent'),
+                                backgroundColor: Colors.green,
+                                duration: const Duration(seconds: 3),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(AppRadius.sm),
+                                    topRight: Radius.circular(AppRadius.sm),
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: 'ERROR: try again',
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.TOP,
+                              timeInSecForIosWeb: 3,
+                              backgroundColor: AppColors.expenseContainer,
+                              textColor: AppColors.expense,
+                              fontSize: 16.0,
+                            );
+                          }
+                        }
+                      },
+                      child: Text('Forget Password?'),
+                    ),
                   ],
                 ),
                 _buttonSelector(buttonID),
