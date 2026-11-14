@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pocket_flow/pages/add_transaction_page.dart';
 import 'package:pocket_flow/pages/home_page.dart';
 import 'package:pocket_flow/pages/records_page.dart';
+import 'package:pocket_flow/pages/settings_page.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({super.key});
@@ -18,7 +19,17 @@ class _RoutePageState extends State<RoutePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pocket Flow'),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+            icon: Icon(Icons.settings),
+          ),
+        ],
       ),
       body: _page[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

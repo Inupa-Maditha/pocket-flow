@@ -68,4 +68,13 @@ class AuthService {
       return false;
     }
   }
+
+  static Future<bool> signOutUser() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
