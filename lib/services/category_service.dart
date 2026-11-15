@@ -15,7 +15,7 @@ class CategoryService {
   static Future<bool> createCategory(CategoryModel category) async {
     try {
       final doc = _path.doc();
-      final map = category.toMap();
+      Map<String, dynamic> map = category.toMap();
       map['id'] = doc.id;
       await doc.set(map);
       return true;
