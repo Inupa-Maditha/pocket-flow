@@ -4,6 +4,8 @@ import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/icons_and_colors.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:pocket_flow/models/category_model.dart';
+import 'package:pocket_flow/services/category_service.dart';
 
 class CreateNewCategory extends StatefulWidget {
   final bool isExpense;
@@ -22,8 +24,14 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
   late IconData defaultIcon;
   late Color selectedIconColor;
   late bool isValidCategoryName;
+  late bool isClickedCategorySavedButton;
   late List<IconData> customIcons;
   late List<IconData> customIconsHome;
+  // String iconCode = Icons.settings.codePoint.toString();
+  // Icon(IconData(int.parse(iconCode),fontFamily: 'MaterialIcons',),);
+  // debugPrint(selectedColor.hashCode.toString());
+  // selectedColor.hex.toString()
+  // eg:- 0xFF-FDC7A2
 
   Future<void> pickColor() async {
     final Color picked = await showColorPickerDialog(
@@ -132,6 +140,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
     defaultIcon = Icons.help_outline;
     selectedName = 'Category Name';
     isValidCategoryName = true;
+    isClickedCategorySavedButton = false;
     customIcons = (widget.isExpense)
         ? IconsAndColors.expenseIconList
         : IconsAndColors.incomeIconList;
@@ -416,7 +425,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                     if (isValidCategoryName) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Transaction saved'),
+                          content: const Text('Category saved'),
                           backgroundColor: Colors.green,
                           duration: const Duration(seconds: 1),
                           shape: RoundedRectangleBorder(
@@ -428,8 +437,18 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                         ),
                       );
                       selectedName = categoryNameController.text.trim();
-                      setState(() {});
+                      setState(() {
+                        isClickedCategorySavedButton = true;
+                      });
                       await Future.delayed(const Duration(seconds: 2));
+                      await CategoryService.createCategory(
+                        CategoryModel(
+                          categoryName: selectedName,
+                          categoryColor: selectedColor.hex,
+                          categoryIcon: defaultIcon.codePoint,
+                          isExpense: widget.isExpense,
+                        ),
+                      );
                       if (context.mounted) {
                         Navigator.pop(context);
                       }
@@ -442,25 +461,27 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                     // selectedName
                     // isValidCategoryName
                   },
-                  child: Container(
-                    width: deviceWidth,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: AppColors.border, width: 1),
-                    ),
-                    child: icons.Center(
-                      child: Text(
-                        'Save ${(widget.isExpense) ? 'Expense' : 'Income'} Category',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.surface,
+                  child: (isClickedCategorySavedButton)
+                      ? Center(child: CircularProgressIndicator())
+                      : Container(
+                          width: deviceWidth,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            border: Border.all(color: AppColors.border, width: 1),
+                          ),
+                          child: icons.Center(
+                            child: Text(
+                              'Save ${(widget.isExpense) ? 'Expense' : 'Income'} Category',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.surface,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
               SizedBox(height: CustomSize.defaultPadding * 2),
