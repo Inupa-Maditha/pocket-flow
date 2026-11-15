@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
+import 'package:pocket_flow/models/category_model.dart';
 import 'package:pocket_flow/pages/create_new_category.dart';
+import 'package:pocket_flow/services/category_service.dart';
 
 class AddTransactionPage extends StatefulWidget {
   const AddTransactionPage({super.key});
@@ -24,8 +27,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final String _amountError = "Invalid amount";
   final String _timeError = 'Invalid Time';
 
-  List<String> incomeCategoryItems = ['Income 1', 'Income 2', 'Income 3'];
-  List<String> expenseCategoryItems = ['Expense 1', 'Expense 2', 'Expense 3'];
+  List<String> incomeCategoryItems = [];
+  List<String> expenseCategoryItems = [];
 
   late DateTime dateTime;
 
@@ -40,6 +43,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   late int _dayControllar;
   late int _hourControllar;
   late int _minuteControllar;
+
+  StreamSubscription<List<CategoryModel>>? _categorySub;
 
   Widget errorBox(bool validation, String errorMessage) {
     return (validation)
@@ -99,14 +104,15 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           children: [
             errorBox(isCategoryValid, _categoryError),
             IconButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
                         CreateNewCategory(isExpense: isExpensePageSelect),
                   ),
                 );
+                getCategories();
               },
               icon: Icon(Icons.add_circle_outline, size: 28, color: AppColors.primary),
             ),
@@ -128,6 +134,28 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     } else {
       return dateTime;
     }
+  }
+
+  void getCategories() {
+    _categorySub?.cancel();
+    _categorySub = CategoryService.getAllCategories().listen((all) {
+      if (!mounted) return;
+      setState(() {
+        expenseCategoryItems = all
+            .where((c) => c.isExpense)
+            .map((c) => c.categoryName)
+            .toList();
+        incomeCategoryItems = all
+            .where((c) => !c.isExpense)
+            .map((c) => c.categoryName)
+            .toList();
+        if (selectedCategory != null &&
+            !expenseCategoryItems.contains(selectedCategory) &&
+            !incomeCategoryItems.contains(selectedCategory)) {
+          selectedCategory = null;
+        }
+      });
+    });
   }
 
   Future<TimeOfDay> pickTime() async {
@@ -153,6 +181,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     isAmountValid = true;
     isTimeValid = true;
     isExpensePageSelect = true;
+    getCategories();
+  }
+
+  @override
+  void dispose() {
+    _categorySub?.cancel();
+    super.dispose();
   }
 
   @override
