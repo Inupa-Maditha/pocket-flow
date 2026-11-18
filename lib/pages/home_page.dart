@@ -26,7 +26,9 @@ class HomePage extends StatelessWidget {
               child: SizedBox(
                 child: Column(
                   children: [
-                    AnnualExpenseTrendChart(),
+                    AnnualExpenseTrendChart(
+                      screenWidth: MediaQuery.of(context).size.width,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

@@ -84,18 +84,20 @@ class TransactionService {
   static Stream<List<TransactionModel>>? getFilteredTransactions(
     DateTime from,
     DateTime to,
-    List<String> categoryId,
+    List<String>? categoryId,
     bool? isExpense,
   ) {
     try {
-      if (categoryId.isEmpty) {
+      if (categoryId != null && categoryId.isEmpty) {
         return Stream.value(<TransactionModel>[]);
       }
       Query<Map<String, dynamic>> query = _path;
       if (isExpense != null) {
         query = query.where('isExpense', isEqualTo: isExpense);
       }
-      query = query.where('categoryId', whereIn: categoryId);
+      if (categoryId != null && categoryId.isNotEmpty) {
+        query = query.where('categoryId', whereIn: categoryId);
+      }
       query = query.where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(from));
       query = query.where('dateTime', isLessThanOrEqualTo: Timestamp.fromDate(to));
       return query

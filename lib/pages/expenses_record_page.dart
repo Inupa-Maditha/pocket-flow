@@ -16,7 +16,10 @@ class ExpensesRecordPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IncomeExpenseBarChart(isExpence: true),
+            IncomeExpenseBarChart(
+              isExpence: true,
+              screenWidth: MediaQuery.of(context).size.width,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(

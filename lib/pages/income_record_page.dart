@@ -16,7 +16,10 @@ class IncomeRecordPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IncomeExpenseBarChart(isExpence: false),
+            IncomeExpenseBarChart(
+              isExpence: false,
+              screenWidth: MediaQuery.of(context).size.width,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
@@ -34,7 +37,6 @@ class IncomeRecordPage extends StatelessWidget {
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final selectedData = dataList[index];
-                debugPrint(selectedData.toString());
                 return IncomeExpenseCategoryCard(
                   isIncome: true,
                   ammount: (selectedData['amount'] as double).toStringAsFixed(2),
