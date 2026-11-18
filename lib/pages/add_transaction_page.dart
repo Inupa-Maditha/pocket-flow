@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
 import 'package:pocket_flow/models/category_model.dart';
+import 'package:pocket_flow/models/transaction_model.dart';
 import 'package:pocket_flow/pages/create_new_category.dart';
 import 'package:pocket_flow/services/category_service.dart';
+import 'package:pocket_flow/services/transaction_service.dart';
 
 class AddTransactionPage extends StatefulWidget {
   const AddTransactionPage({super.key});
@@ -37,6 +39,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   late bool isAmountValid;
   late bool isTimeValid;
   late bool isExpensePageSelect;
+  late bool isClickedSaveButton;
 
   late int _yearControllar;
   late int _monthControllar;
@@ -181,6 +184,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     isAmountValid = true;
     isTimeValid = true;
     isExpensePageSelect = true;
+    isClickedSaveButton = false;
     getCategories();
   }
 
@@ -481,7 +485,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                           errorBox(isTimeValid, _timeError),
                           SizedBox(height: CustomSize.defaultPadding * 4),
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
                               dateTime = DateTime.now();
                               DateTime selectTime = DateTime(
                                 _yearControllar,
@@ -514,47 +518,68 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                                   isTitleValid &&
                                   isTimeValid &&
                                   isAmountValid) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Transaction saved'),
-                                    backgroundColor: Colors.green,
-                                    duration: const Duration(seconds: 2),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8),
-                                      ),
+                                setState(() {
+                                  isClickedSaveButton = true;
+                                });
+                                await TransactionService.createTransaction(
+                                  TransactionModel(
+                                    categoryId: await CategoryService.getCategoryIdByName(
+                                      selectedCategory!,
                                     ),
+                                    title: _titleControllar.text,
+                                    transactionAmount: double.parse(
+                                      _amountControllar.text,
+                                    ),
+                                    dateTime: selectTime,
+                                    isExpense: isExpensePageSelect,
                                   ),
                                 );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text('Transaction saved'),
+                                      backgroundColor: Colors.green,
+                                      duration: const Duration(seconds: 2),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                setState(() {
+                                  isClickedSaveButton = false;
+                                });
                                 _titleControllar.text = '';
                                 _amountControllar.text = '';
                               }
-
-                              // VALIDATIONS
-                              //isCategoryValid
-                              //isTitleValid
-                              //isTimeValid
                             },
-                            child: Container(
-                              height: 54,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                border: Border.all(color: AppColors.border, width: 1),
-                                borderRadius: BorderRadius.circular(AppRadius.md),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Save',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.surface,
+                            child: (isClickedSaveButton)
+                                ? Center(child: CircularProgressIndicator())
+                                : Container(
+                                    height: 54,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      border: Border.all(
+                                        color: AppColors.border,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(AppRadius.md),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Save',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.surface,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ),
                           SizedBox(height: CustomSize.defaultPadding * 2),
                         ],

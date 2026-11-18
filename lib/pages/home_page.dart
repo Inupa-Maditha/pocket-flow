@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
+import 'package:pocket_flow/models/category_model.dart';
 import 'package:pocket_flow/pages/display_transactions_page.dart';
+import 'package:pocket_flow/services/category_service.dart';
+import 'package:pocket_flow/services/transaction_service.dart';
 import 'package:pocket_flow/widgets/main_dashboard.dart';
 import 'package:pocket_flow/widgets/annual_expense_trend_chart.dart';
 import 'package:pocket_flow/widgets/recent_transaction_card.dart';
@@ -51,14 +56,80 @@ class HomePage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    ListView.builder(
-                      itemCount: 5,
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      padding: EdgeInsets.only(bottom: 20),
-                      itemBuilder: (context, index) {
-                        return RecentTransactionCard();
+                    StreamBuilder(
+                      stream: TransactionService.getRecentTransactions(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return SizedBox(
+                            child: Center(
+                              child: CircularProgressIndicator(strokeWidth: 3),
+                            ),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            padding: EdgeInsets.only(bottom: 20),
+                            itemBuilder: (context, index) {
+                              final data = snapshot.data![index].toMap();
+                              final dateTime = (data['dateTime'] as Timestamp).toDate();
+                              final date = DateFormat('yyyy-MM-dd').format(dateTime);
+                              final time = DateFormat('HH:mm').format(dateTime);
+
+                              return FutureBuilder<CategoryModel?>(
+                                future: CategoryService.getCategoryByID(
+                                  data['categoryId'],
+                                ),
+                                builder: (context, categorySnapshot) {
+                                  if (categorySnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox.shrink();
+                                  }
+
+                                  if (!categorySnapshot.hasData) {
+                                    return SizedBox.shrink();
+                                  }
+
+                                  return RecentTransactionCard(
+                                    isIncome: !data['isExpense'],
+                                    transactionAmmount: data['transactionAmount'],
+                                    category: categorySnapshot.data!
+                                        .toMap()['categoryName'],
+                                    description: data['title'],
+                                    dateAndTime: '$date $time',
+                                    categoryIcon: categorySnapshot.data!
+                                        .toMap()['categoryIcon'],
+                                    categoryColor: categorySnapshot.data!
+                                        .toMap()['categoryColor'],
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                        return Expanded(
+                          child: SizedBox(
+                            child: Center(
+                              child: Text(
+                                'No Transactions',
+                                style: TextStyle(color: AppColors.textSecondary),
+                              ),
+                            ),
+                          ),
+                        );
                       },
+                      // ),
+                      // ListView.builder(
+                      //   itemCount: 5,
+                      //   physics: NeverScrollableScrollPhysics(),
+                      //   shrinkWrap: true,
+                      //   padding: EdgeInsets.only(bottom: 20),
+                      //   itemBuilder: (context, index) {
+                      //     return RecentTransactionCard();
+                      //   },
+                      // ),
                     ),
                   ],
                 ),

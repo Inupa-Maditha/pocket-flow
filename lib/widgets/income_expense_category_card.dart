@@ -7,20 +7,23 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
   final String ammount;
   final String transactionCount;
   final String categoryName;
-  final IconData categoryIcon;
-  final Color categoryColor;
+  final String categoryId;
+  final int categoryIcon;
+  final String categoryColor;
   const IncomeExpenseCategoryCard({
     super.key,
     required this.isIncome,
     required this.ammount,
     required this.transactionCount,
     required this.categoryName,
+    required this.categoryId,
     required this.categoryIcon,
     required this.categoryColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String finalColor = '0xFF$categoryColor';
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
@@ -34,7 +37,13 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Icon(categoryIcon, size: 54, color: categoryColor)],
+            children: [
+              Icon(
+                IconData(categoryIcon, fontFamily: 'MaterialIcons'),
+                size: 38,
+                color: Color(int.parse(finalColor)),
+              ),
+            ],
           ),
           Expanded(
             child: Padding(
@@ -47,9 +56,9 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
                       Text(
                         categoryName,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: categoryColor,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ],
@@ -57,7 +66,10 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('$transactionCount transactions'),
+                      Text(
+                        '$transactionCount transactions',
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                      ),
                       Text(
                         'LKR $ammount',
                         style: TextStyle(
@@ -82,8 +94,9 @@ class IncomeExpenseCategoryCard extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => MonthlyTransactionDetailPage(
                         categoryName: categoryName,
-                        categoryIcon: Icons.lunch_dining,
-                        categoryColor: Colors.amber,
+                        categoryId: categoryId,
+                        categoryIcon: IconData(categoryIcon, fontFamily: 'MaterialIcons'),
+                        categoryColor: Color(int.parse(finalColor)),
                         isIncome: isIncome,
                       ),
                     ),

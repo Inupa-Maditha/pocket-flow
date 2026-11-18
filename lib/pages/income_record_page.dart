@@ -5,46 +5,48 @@ import 'package:pocket_flow/widgets/income_expense_bar_chart.dart';
 import 'package:pocket_flow/widgets/income_expense_category_card.dart';
 
 class IncomeRecordPage extends StatelessWidget {
-  const IncomeRecordPage({super.key});
+  final List<Map<String, dynamic>> dataList;
+  const IncomeRecordPage({super.key, required this.dataList});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: CustomSize.defaultPadding),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              IncomeExpenseBarChart(isExpence: false),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Text(
-                  'Income Categories :',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textSecondary,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: CustomSize.defaultPadding),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IncomeExpenseBarChart(isExpence: false),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'Income Categories :',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textSecondary,
                 ),
               ),
-              ListView.builder(
-                itemCount: 5,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(bottom: CustomSize.defaultPadding),
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return IncomeExpenseCategoryCard(
-                    isIncome: true,
-                    ammount: '28500.00',
-                    transactionCount: '29',
-                    categoryName: 'Food & Dining',
-                    categoryIcon: Icons.food_bank_sharp,
-                    categoryColor: Colors.blueAccent,
-                  );
-                },
-              ),
-            ],
-          ),
+            ),
+            ListView.builder(
+              itemCount: dataList.length,
+              shrinkWrap: true,
+              padding: EdgeInsets.only(bottom: CustomSize.defaultPadding),
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final selectedData = dataList[index];
+                debugPrint(selectedData.toString());
+                return IncomeExpenseCategoryCard(
+                  isIncome: true,
+                  ammount: (selectedData['amount'] as double).toStringAsFixed(2),
+                  transactionCount: selectedData['count'].toString(),
+                  categoryName: selectedData['title'],
+                  categoryId: selectedData['id'],
+                  categoryIcon: selectedData['icon'],
+                  categoryColor: selectedData['color'],
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

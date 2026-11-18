@@ -5,7 +5,8 @@ import 'package:pocket_flow/widgets/income_expense_bar_chart.dart';
 import 'package:pocket_flow/widgets/income_expense_category_card.dart';
 
 class ExpensesRecordPage extends StatelessWidget {
-  const ExpensesRecordPage({super.key});
+  final List<Map<String, dynamic>> dataList;
+  const ExpensesRecordPage({super.key, required this.dataList});
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +28,20 @@ class ExpensesRecordPage extends StatelessWidget {
               ),
             ),
             ListView.builder(
-              itemCount: 5,
+              itemCount: dataList.length,
               shrinkWrap: true,
               padding: EdgeInsets.only(bottom: CustomSize.defaultPadding),
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
+                final selectedData = dataList[index];
                 return IncomeExpenseCategoryCard(
                   isIncome: false,
-                  ammount: '28500.00',
-                  transactionCount: '29',
-                  categoryName: 'Food & Dining',
-                  categoryIcon: Icons.food_bank_sharp,
-                  categoryColor: Colors.blueAccent,
+                  ammount: (selectedData['amount'] as double).toStringAsFixed(2),
+                  transactionCount: selectedData['count'].toString(),
+                  categoryName: selectedData['title'],
+                  categoryId: selectedData['id'],
+                  categoryIcon: selectedData['icon'],
+                  categoryColor: selectedData['color'],
                 );
               },
             ),

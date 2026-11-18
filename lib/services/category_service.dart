@@ -14,11 +14,19 @@ class CategoryService {
 
   static Future<bool> createCategory(CategoryModel category) async {
     try {
-      final doc = _path.doc();
-      Map<String, dynamic> map = category.toMap();
-      map['id'] = doc.id;
-      await doc.set(map);
-      return true;
+      final name = category.categoryName.trim().toLowerCase();
+      final snap = await _path.get();
+      final exists = snap.docs.any(
+        (d) => (d.data()['categoryName'] as String).trim().toLowerCase() == name,
+      );
+      if (!exists) {
+        final doc = _path.doc();
+        Map<String, dynamic> map = category.toMap();
+        map['id'] = doc.id;
+        await doc.set(map);
+        return true;
+      }
+      return false;
     } catch (e) {
       debugPrint('create category failed: $e');
       return false;
@@ -52,6 +60,21 @@ class CategoryService {
           (snap) =>
               snap.docs.map((doc) => CategoryModel.fromMap(doc.id, doc.data())).toList(),
         );
+  }
+
+  static Future<String> getCategoryIdByName(String categoryName) async {
+    final snap = await _path
+        .where('categoryName', isEqualTo: categoryName)
+        .limit(1)
+        .get();
+
+    return snap.docs.first.id;
+  }
+
+  static Future<String> getCategoryNameById(String id) async {
+    final snap = await _path.where('id', isEqualTo: id).limit(1).get();
+
+    return snap.docs.first.data()['categoryName'];
   }
 
   static Future<bool> deleteCategory(String id) async {

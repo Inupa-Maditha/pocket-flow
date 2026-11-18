@@ -19,6 +19,7 @@ class TransactionModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'transactionId': transactionId,
       'categoryId': categoryId,
       'isExpense': isExpense,
       'title': title,

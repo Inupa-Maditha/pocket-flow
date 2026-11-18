@@ -13,6 +13,7 @@ class CategoryModel {
   });
 
   Map<String, dynamic> toMap() => {
+    'id': id,
     'isExpense': isExpense,
     'categoryIcon': categoryIcon,
     'categoryColor': categoryColor,

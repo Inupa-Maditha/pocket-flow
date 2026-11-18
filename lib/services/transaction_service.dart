@@ -65,25 +65,20 @@ class TransactionService {
     }
   }
 
-  static Stream<List<TransactionModel>>? getTransactionByDateRange(
+  static Stream<List<TransactionModel>> getTransactionByDateRange(
     DateTime from,
     DateTime to,
   ) {
-    try {
-      return _path
-          .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(from))
-          .where('dateTime', isLessThanOrEqualTo: Timestamp.fromDate(to))
-          .orderBy('dateTime', descending: true)
-          .snapshots()
-          .map(
-            (snap) => snap.docs
-                .map((doc) => TransactionModel.fromMap(doc.id, doc.data()))
-                .toList(),
-          );
-    } catch (e) {
-      debugPrint('read transaction failed: $e');
-      return null;
-    }
+    return _path
+        .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(from))
+        .where('dateTime', isLessThanOrEqualTo: Timestamp.fromDate(to))
+        .orderBy('dateTime', descending: true)
+        .snapshots()
+        .map(
+          (snap) => snap.docs
+              .map((doc) => TransactionModel.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
   }
 
   static Stream<List<TransactionModel>>? getFilteredTransactions(

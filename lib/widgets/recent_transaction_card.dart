@@ -2,30 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
 
 class RecentTransactionCard extends StatelessWidget {
-  const RecentTransactionCard({super.key});
+  final bool isIncome;
+  final double transactionAmmount;
+  final String category;
+  final int categoryIcon;
+  final String categoryColor;
+  final String description;
+  final String dateAndTime;
+  const RecentTransactionCard({
+    super.key,
+    required this.isIncome,
+    required this.transactionAmmount,
+    required this.category,
+    required this.description,
+    required this.dateAndTime,
+    required this.categoryIcon,
+    required this.categoryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    bool isIncome = true;
-    double transactionAmmount = 2000;
-    String category = 'Food & Dining';
-    String description = 'Dinner at resturant';
-    String dateAndTime = '2026-10-19 18:45';
-    // ignore: dead_code
-    String mark = (isIncome) ? '+' : '-';
+    final String finalCategoryColor = '0xFF$categoryColor';
     return Column(
       children: [
         Container(
           padding: EdgeInsets.only(bottom: 8, top: 8, right: 12),
           margin: EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            color: AppColors.primaryContainer,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
             children: [
-              Icon(Icons.food_bank, size: 54, color: Colors.blue),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: Icon(
+                  IconData(categoryIcon, fontFamily: 'MaterialIcons'),
+                  size: 38,
+                  color: Color(int.parse(finalCategoryColor)),
+                ),
+              ),
               SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -36,14 +53,13 @@ class RecentTransactionCard extends StatelessWidget {
                       children: [
                         Text(
                           category,
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                         Text(
-                          '$mark LKR ${transactionAmmount.toStringAsFixed(2)}',
+                          '${isIncome ? '+' : '-'} LKR ${transactionAmmount.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            // ignore: dead_code
                             color: (isIncome) ? Colors.green : Colors.red,
                           ),
                         ),
@@ -52,7 +68,16 @@ class RecentTransactionCard extends StatelessWidget {
                     SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text(description), Text(dateAndTime)],
+                      children: [
+                        Text(
+                          description,
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                        ),
+                        Text(
+                          dateAndTime,
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                        ),
+                      ],
                     ),
                   ],
                 ),
