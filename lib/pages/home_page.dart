@@ -68,58 +68,58 @@ class HomePage extends StatelessWidget {
                             ),
                           );
                         }
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(bottom: 20),
-                            itemBuilder: (context, index) {
-                              final data = snapshot.data![index].toMap();
-                              final dateTime = (data['dateTime'] as Timestamp).toDate();
-                              final date = DateFormat('yyyy-MM-dd').format(dateTime);
-                              final time = DateFormat('HH:mm').format(dateTime);
-
-                              return FutureBuilder<CategoryModel?>(
-                                future: CategoryService.getCategoryByID(
-                                  data['categoryId'],
+                        if (!snapshot.hasData) {
+                          return Expanded(
+                            child: SizedBox(
+                              child: Center(
+                                child: Text(
+                                  'No Transactions',
+                                  style: TextStyle(color: AppColors.textSecondary),
                                 ),
-                                builder: (context, categorySnapshot) {
-                                  if (categorySnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return SizedBox.shrink();
-                                  }
-
-                                  if (!categorySnapshot.hasData) {
-                                    return SizedBox.shrink();
-                                  }
-
-                                  return RecentTransactionCard(
-                                    isIncome: !data['isExpense'],
-                                    transactionAmmount: data['transactionAmount'],
-                                    category: categorySnapshot.data!
-                                        .toMap()['categoryName'],
-                                    description: data['title'],
-                                    dateAndTime: '$date $time',
-                                    categoryIcon: categorySnapshot.data!
-                                        .toMap()['categoryIcon'],
-                                    categoryColor: categorySnapshot.data!
-                                        .toMap()['categoryColor'],
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }
-                        return Expanded(
-                          child: SizedBox(
-                            child: Center(
-                              child: Text(
-                                'No Transactions',
-                                style: TextStyle(color: AppColors.textSecondary),
                               ),
                             ),
-                          ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(bottom: 20),
+                          itemBuilder: (context, index) {
+                            final data = snapshot.data![index].toMap();
+                            final dateTime = (data['dateTime'] as Timestamp).toDate();
+                            final date = DateFormat('yyyy-MM-dd').format(dateTime);
+                            final time = DateFormat('HH:mm').format(dateTime);
+
+                            return FutureBuilder<CategoryModel?>(
+                              future: CategoryService.getCategoryByID(data['categoryId']),
+                              builder: (context, categorySnapshot) {
+                                if (categorySnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return SizedBox(
+                                    height: 50,
+                                    child: Center(child: CircularProgressIndicator()),
+                                  );
+                                }
+                                if (!categorySnapshot.hasData) {
+                                  return SizedBox.shrink();
+                                }
+                                return RecentTransactionCard(
+                                  isIncome: !data['isExpense'],
+                                  transactionAmmount: data['transactionAmount'],
+                                  category: categorySnapshot.data!
+                                      .toMap()['categoryName'],
+                                  description: data['title'],
+                                  dateAndTime: '$date $time',
+                                  categoryIcon: categorySnapshot.data!
+                                      .toMap()['categoryIcon'],
+                                  categoryColor: categorySnapshot.data!
+                                      .toMap()['categoryColor'],
+                                );
+                              },
+                            );
+                          },
                         );
                       },
                       // ),
