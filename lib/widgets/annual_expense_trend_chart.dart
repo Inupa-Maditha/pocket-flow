@@ -59,10 +59,11 @@ class _AnnualExpenseTrendChartState extends State<AnnualExpenseTrendChart> {
           (index) => FlSpot(index.toDouble(), object.monthlyTotal[index]),
         );
 
-        double maxY = 0.0;
-        maxY = object.monthlyTotal.reduce(
+        final double rawMax = object.monthlyTotal.reduce(
           (value, element) => value > element ? value : element,
         );
+        final double chartMaxY = rawMax <= 0 ? 1000 : (rawMax / 1000).ceil() * 1000.0;
+        final double yInterval = chartMaxY / 5;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +85,7 @@ class _AnnualExpenseTrendChartState extends State<AnnualExpenseTrendChart> {
                   minX: 0,
                   maxX: 12,
                   minY: 0,
-                  maxY: (maxY / 1000).ceil() * 1000,
+                  maxY: chartMaxY,
 
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: false),
@@ -134,7 +135,7 @@ class _AnnualExpenseTrendChartState extends State<AnnualExpenseTrendChart> {
                       axisNameSize: 20,
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: (maxY / 1000).ceil() * 1000 / 5,
+                        interval: yInterval,
                         reservedSize: 40,
                         getTitlesWidget: (value, meta) {
                           return SideTitleWidget(

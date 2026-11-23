@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/paddings.dart';
+import 'package:pocket_flow/models/category_model.dart';
+import 'package:pocket_flow/services/category_service.dart';
+import 'package:pocket_flow/services/transaction_service.dart';
+import 'package:pocket_flow/shared/shared_data.dart';
 
 class TransactionFilterDashBoard extends StatefulWidget {
   const TransactionFilterDashBoard({super.key});
@@ -10,79 +15,20 @@ class TransactionFilterDashBoard extends StatefulWidget {
 }
 
 class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard> {
-  //  Useful Variabals
-  //  List<Map<String, dynamic>> selectedCategories
-  //  DateTimeRange selectedDateRange
-  //  List<Map<String, dynamic>> allCategories
-
   late int selectedBoxID;
+  late bool isSearchClicked;
 
-  // Dummy Data Lis
-  List<Map<String, dynamic>> allCategories = [
-    {
-      'categoryName': 'Category One',
-      'categoryIcon': Icons.settings,
-      'categoryColor': Colors.blue,
-      'isIncome': true,
-    },
-    {
-      'categoryName': 'Category Two',
-      'categoryIcon': Icons.settings,
-      'categoryColor': Colors.red,
-      'isIncome': true,
-    },
-    {
-      'categoryName': 'Category Three',
-      'categoryIcon': Icons.settings,
-      'categoryColor': Colors.green,
-      'isIncome': false,
-    },
-    {
-      'categoryName': 'Category Four',
-      'categoryIcon': Icons.settings,
-      'categoryColor': Colors.yellow,
-      'isIncome': false,
-    },
-    {
-      'categoryName': 'Category Five',
-      'categoryIcon': Icons.settings,
-      'categoryColor': Colors.grey,
-      'isIncome': true,
-    },
-  ];
+  List<Map<String, dynamic>> allCategories = [];
   List<Map<String, dynamic>> checkBoxCategories = [];
   List<Map<String, dynamic>> selectedCategories = [];
-
-  //  Examples Types for checkBoxCategories and selectedCategories List
-
-  // checkBoxCategories = [
-  //   {
-  //     'isChecked': true,
-  //     'category': {
-  //       {
-  //         'categoryName': 'Category Five',
-  //         'categoryIcon': Icons.settings,
-  //         'categoryColor': Colors.grey,
-  //         'isIncome': true,
-  //       },
-  //     },
-  //   },
-  // ];
-  // selectedCategories = [
-  //   {
-  //     'categoryName': 'Category Five',
-  //     'categoryIcon': Icons.settings,
-  //     'categoryColor': Colors.grey,
-  //     'isIncome': true,
-  //   },
-  // ];
+  List<Map<String, dynamic>> displayTransactions = [];
 
   DateTimeRange selectedDateRange = DateTimeRange(
     start: DateTime(DateTime.now().year, DateTime.now().month - 1, DateTime.now().day),
     end: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
   );
 
-  Widget _trxSelector(double deviceWidth, int componentID, String title, IconData? icon) {
+  Widget trxSelector(double deviceWidth, int componentID, String title, IconData? icon) {
     bool isSelected = componentID == selectedBoxID;
     List<Widget> text = [];
     if (icon != null) {
@@ -121,12 +67,13 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
     );
   }
 
-  Widget _miniCategoryCard(
+  Widget miniCategoryCard(
     String categoryName,
-    IconData categoryIcon,
-    Color categoryColor,
+    int categoryIcon,
+    String categoryColor,
     int index,
   ) {
+    final color = int.parse('0xff$categoryColor');
     return Container(
       margin: EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
@@ -138,7 +85,11 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 8),
-            child: Icon(categoryIcon, size: 20, color: categoryColor),
+            child: Icon(
+              IconData(categoryIcon, fontFamily: 'MaterialIcons'),
+              size: 20,
+              color: Color(color),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -167,7 +118,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
     );
   }
 
-  Future<void> _dateRangePicker() async {
+  Future<void> dateRangePicker() async {
     final DateTimeRange? result = await showDateRangePicker(
       context: context,
       firstDate: DateTime(
@@ -184,14 +135,106 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
     }
   }
 
+  void getInitData() async {
+    final categories = await CategoryService.getAllCategories().first;
+    final data = await TransactionService.getTransactionByDateRange(
+      selectedDateRange.start,
+      selectedDateRange.end,
+    ).first;
+
+    allCategories.clear();
+    selectedCategories.clear();
+    checkBoxCategories.clear();
+    displayTransactions.clear();
+
+    for (var element in categories) {
+      final map = element.toMap();
+      allCategories.add(map);
+      checkBoxCategories.add({'isChecked': true, 'category': map});
+    }
+    selectedCategories = List.from(allCategories);
+
+    for (var element in data) {
+      CategoryModel? category;
+      final String time = DateFormat('hh:mm a').format(element.dateTime);
+      final String date = DateFormat('yyyy-MM-dd').format(element.dateTime);
+
+      for (var i = 0; i < categories.length; i++) {
+        if (element.categoryId == categories[i].id) {
+          category = categories[i];
+          break;
+        }
+      }
+      if (category != null) {
+        displayTransactions.add({
+          'id': element.transactionId,
+          'title': element.title,
+          'price': element.transactionAmount,
+          'time': time,
+          'date': date,
+          'categoryName': category.categoryName,
+          'categoryIcon': category.categoryIcon,
+          'categoryColor': category.categoryColor,
+          'isExpense': element.isExpense,
+        });
+      }
+    }
+    setState(() {
+      SharedData.setTransactions = displayTransactions;
+    });
+  }
+
+  void getFilteredData() async {
+    displayTransactions.clear();
+    List<String> ids = [];
+
+    for (var element in selectedCategories) {
+      ids.add(element['id']);
+    }
+    final data = await TransactionService.getFilteredTransactions(
+      selectedDateRange.start,
+      selectedDateRange.end,
+      ids,
+      null,
+    )!.first;
+
+    for (var element in data) {
+      Map<String, dynamic>? category;
+      final String time = DateFormat('hh:mm a').format(element.dateTime);
+      final String date = DateFormat('yyyy-MM-dd').format(element.dateTime);
+
+      for (var i = 0; i < selectedCategories.length; i++) {
+        if (element.categoryId == selectedCategories[i]['id']) {
+          category = selectedCategories[i];
+          break;
+        }
+      }
+      if (category != null) {
+        displayTransactions.add({
+          'id': element.transactionId,
+          'title': element.title,
+          'price': element.transactionAmount,
+          'time': time,
+          'date': date,
+          'categoryName': category['categoryName'],
+          'categoryIcon': category['categoryIcon'],
+          'categoryColor': category['categoryColor'],
+          'isExpense': element.isExpense,
+        });
+      }
+    }
+    setState(() {
+      isSearchClicked = false;
+      SharedData.setTransactions = displayTransactions;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     selectedBoxID = 0;
-    selectedCategories = List.from(allCategories);
-    for (int i = 0; i < allCategories.length; i++) {
-      checkBoxCategories.add({'isChecked': true, 'category': allCategories[i]});
-    }
+    isSearchClicked = false;
+    getInitData();
   }
 
   @override
@@ -211,7 +254,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               InkWell(
-                onTap: () => _dateRangePicker(),
+                onTap: () => dateRangePicker(),
                 child: Container(
                   width: (deviceWidth < 412) ? 226 : deviceWidth * 0.55,
                   padding: EdgeInsets.all(8),
@@ -289,14 +332,15 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                                     for (int i = 0; i < checkBoxCategories.length; i++) {
                                       if (checkBoxCategories[i]['isChecked']) {
                                         selectedCategories.add({
+                                          'id': checkBoxCategories[i]['category']['id'],
                                           'categoryName':
                                               checkBoxCategories[i]['category']['categoryName'],
                                           'categoryIcon':
                                               checkBoxCategories[i]['category']['categoryIcon'],
                                           'categoryColor':
                                               checkBoxCategories[i]['category']['categoryColor'],
-                                          'isIncome':
-                                              checkBoxCategories[i]['category']['isIncome'],
+                                          'isExpense':
+                                              checkBoxCategories[i]['category']['isExpense'],
                                         });
                                       }
                                     }
@@ -360,19 +404,20 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                       selectedCategories.clear();
                       for (int i = 0; i < checkBoxCategories.length; i++) {
                         selectedCategories.add({
+                          'id': checkBoxCategories[i]['category']['id'],
                           'categoryName':
                               checkBoxCategories[i]['category']['categoryName'],
                           'categoryIcon':
                               checkBoxCategories[i]['category']['categoryIcon'],
                           'categoryColor':
                               checkBoxCategories[i]['category']['categoryColor'],
-                          'isIncome': checkBoxCategories[i]['category']['isIncome'],
+                          'isExpense': checkBoxCategories[i]['category']['isExpense'],
                         });
                       }
                     });
                   }
                 },
-                child: _trxSelector(deviceWidth, 0, 'Both', null),
+                child: trxSelector(deviceWidth, 0, 'Both', null),
               ),
               InkWell(
                 onTap: () {
@@ -381,7 +426,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                       selectedBoxID = 1;
                       checkBoxCategories.clear();
                       for (int i = 0; i < allCategories.length; i++) {
-                        if (allCategories[i]['isIncome']) {
+                        if (!allCategories[i]['isExpense']) {
                           checkBoxCategories.add({
                             'isChecked': true,
                             'category': allCategories[i],
@@ -391,19 +436,20 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                       selectedCategories.clear();
                       for (int i = 0; i < checkBoxCategories.length; i++) {
                         selectedCategories.add({
+                          'id': checkBoxCategories[i]['category']['id'],
                           'categoryName':
                               checkBoxCategories[i]['category']['categoryName'],
                           'categoryIcon':
                               checkBoxCategories[i]['category']['categoryIcon'],
                           'categoryColor':
                               checkBoxCategories[i]['category']['categoryColor'],
-                          'isIncome': checkBoxCategories[i]['category']['isIncome'],
+                          'isExpense': checkBoxCategories[i]['category']['isExpense'],
                         });
                       }
                     });
                   }
                 },
-                child: _trxSelector(deviceWidth, 1, 'Income', Icons.arrow_upward),
+                child: trxSelector(deviceWidth, 1, 'Income', Icons.arrow_upward),
               ),
               InkWell(
                 onTap: () {
@@ -412,7 +458,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                       selectedBoxID = 2;
                       checkBoxCategories.clear();
                       for (int i = 0; i < allCategories.length; i++) {
-                        if (!allCategories[i]['isIncome']) {
+                        if (allCategories[i]['isExpense']) {
                           checkBoxCategories.add({
                             'isChecked': true,
                             'category': allCategories[i],
@@ -422,19 +468,20 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                       selectedCategories.clear();
                       for (int i = 0; i < checkBoxCategories.length; i++) {
                         selectedCategories.add({
+                          'id': checkBoxCategories[i]['category']['id'],
                           'categoryName':
                               checkBoxCategories[i]['category']['categoryName'],
                           'categoryIcon':
                               checkBoxCategories[i]['category']['categoryIcon'],
                           'categoryColor':
                               checkBoxCategories[i]['category']['categoryColor'],
-                          'isIncome': checkBoxCategories[i]['category']['isIncome'],
+                          'isExpense': checkBoxCategories[i]['category']['isExpense'],
                         });
                       }
                     });
                   }
                 },
-                child: _trxSelector(deviceWidth, 2, 'Expense', Icons.arrow_downward),
+                child: trxSelector(deviceWidth, 2, 'Expense', Icons.arrow_downward),
               ),
             ],
           ),
@@ -445,7 +492,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
               Container(
                 height: 48,
                 padding: EdgeInsets.all(6),
-                width: deviceWidth * 0.7,
+                width: deviceWidth * 0.74,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                   border: Border.all(color: AppColors.border, width: 1),
@@ -457,7 +504,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                   shrinkWrap: true,
                   itemCount: selectedCategories.length,
                   itemBuilder: (context, index) {
-                    return _miniCategoryCard(
+                    return miniCategoryCard(
                       selectedCategories[index]['categoryName'],
                       selectedCategories[index]['categoryIcon'],
                       selectedCategories[index]['categoryColor'],
@@ -466,37 +513,29 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
                   },
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    selectedBoxID = 0;
-                    selectedDateRange = DateTimeRange(
-                      start: DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month - 1,
-                        DateTime.now().day,
+              (isSearchClicked)
+                  ? CircularProgressIndicator(
+                      strokeWidth: 2,
+                      constraints: BoxConstraints(
+                        minHeight: 20,
+                        minWidth: 20,
+                        maxHeight: 35,
+                        maxWidth: 35,
                       ),
-                      end: DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        getFilteredData();
+                        setState(() {
+                          isSearchClicked = true;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.search_rounded,
+                        color: AppColors.primary,
+                        size: 30,
                       ),
-                    );
-                    selectedCategories.clear();
-                    checkBoxCategories.clear();
-                    for (int i = 0; i < allCategories.length; i++) {
-                      checkBoxCategories.add({
-                        'isChecked': false,
-                        'category': allCategories[i],
-                      });
-                    }
-                  });
-                },
-                child: Text(
-                  'Clear all',
-                  style: TextStyle(color: AppColors.primary, fontSize: 12),
-                ),
-              ),
+                    ),
             ],
           ),
         ],

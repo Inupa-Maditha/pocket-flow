@@ -10,23 +10,38 @@ import 'package:pocket_flow/widgets/main_dashboard.dart';
 import 'package:pocket_flow/widgets/annual_expense_trend_chart.dart';
 import 'package:pocket_flow/widgets/recent_transaction_card.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _refreshCount = 0;
+
+  Future<void> _refresh() async {
+    setState(() => _refreshCount++);
+    await Future.delayed(const Duration(milliseconds: 600));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        children: [
-          MainDashboard(),
-          SizedBox(height: 25),
-          Expanded(
-            child: SingleChildScrollView(
-              child: SizedBox(
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          children: [
+            MainDashboard(key: ValueKey('dash$_refreshCount')),
+            const SizedBox(height: 25),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
                   children: [
                     AnnualExpenseTrendChart(
+                      key: ValueKey('chart$_refreshCount'),
                       screenWidth: MediaQuery.of(context).size.width,
                     ),
                     Row(
@@ -40,13 +55,14 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DisplayTransactionsPage(),
                               ),
                             );
+                            if (mounted) setState(() => _refreshCount++);
                           },
                           child: Text(
                             'View All',
@@ -62,20 +78,20 @@ class HomePage extends StatelessWidget {
                       stream: TransactionService.getRecentTransactions(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return SizedBox(
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
                             child: Center(
                               child: CircularProgressIndicator(strokeWidth: 3),
                             ),
                           );
                         }
-                        if (!snapshot.hasData) {
-                          return Expanded(
-                            child: SizedBox(
-                              child: Center(
-                                child: Text(
-                                  'No Transactions',
-                                  style: TextStyle(color: AppColors.textSecondary),
-                                ),
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: Text(
+                                'No Transactions',
+                                style: TextStyle(color: AppColors.textSecondary),
                               ),
                             ),
                           );
@@ -83,9 +99,9 @@ class HomePage extends StatelessWidget {
 
                         return ListView.builder(
                           itemCount: snapshot.data!.length,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          padding: EdgeInsets.only(bottom: 20),
+                          padding: const EdgeInsets.only(bottom: 20),
                           itemBuilder: (context, index) {
                             final data = snapshot.data![index].toMap();
                             final dateTime = (data['dateTime'] as Timestamp).toDate();
@@ -97,13 +113,13 @@ class HomePage extends StatelessWidget {
                               builder: (context, categorySnapshot) {
                                 if (categorySnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return SizedBox(
+                                  return const SizedBox(
                                     height: 50,
                                     child: Center(child: CircularProgressIndicator()),
                                   );
                                 }
                                 if (!categorySnapshot.hasData) {
-                                  return SizedBox.shrink();
+                                  return const SizedBox.shrink();
                                 }
                                 return RecentTransactionCard(
                                   isIncome: !data['isExpense'],
@@ -122,23 +138,13 @@ class HomePage extends StatelessWidget {
                           },
                         );
                       },
-                      // ),
-                      // ListView.builder(
-                      //   itemCount: 5,
-                      //   physics: NeverScrollableScrollPhysics(),
-                      //   shrinkWrap: true,
-                      //   padding: EdgeInsets.only(bottom: 20),
-                      //   itemBuilder: (context, index) {
-                      //     return RecentTransactionCard();
-                      //   },
-                      // ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
