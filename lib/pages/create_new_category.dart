@@ -9,7 +9,14 @@ import 'package:pocket_flow/services/category_service.dart';
 
 class CreateNewCategory extends StatefulWidget {
   final bool isExpense;
-  const CreateNewCategory({super.key, required this.isExpense});
+  final bool isEditMode;
+  final String? categoryId;
+  const CreateNewCategory({
+    super.key,
+    required this.isExpense,
+    this.isEditMode = false,
+    this.categoryId,
+  });
 
   @override
   State<CreateNewCategory> createState() => _CreateNewCategoryState();
@@ -27,11 +34,6 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
   late bool isClickedCategorySavedButton;
   late List<IconData> customIcons;
   late List<IconData> customIconsHome;
-  // String iconCode = Icons.settings.codePoint.toString();
-  // Icon(IconData(int.parse(iconCode),fontFamily: 'MaterialIcons',),);
-  // debugPrint(selectedColor.hashCode.toString());
-  // selectedColor.hex.toString()
-  // eg:- 0xFF-FDC7A2
 
   Future<void> pickColor() async {
     final Color picked = await showColorPickerDialog(
@@ -153,7 +155,9 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: Text('Create New Category')),
+      appBar: AppBar(
+        title: Text((widget.isEditMode) ? 'Edit Category' : 'Create New Category'),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: CustomSize.defaultPadding),
@@ -441,25 +445,30 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                         isClickedCategorySavedButton = true;
                       });
                       await Future.delayed(const Duration(seconds: 2));
-                      await CategoryService.createCategory(
-                        CategoryModel(
-                          categoryName: selectedName,
-                          categoryColor: selectedColor.hex,
-                          categoryIcon: defaultIcon.codePoint,
-                          isExpense: widget.isExpense,
-                        ),
-                      );
+                      (widget.isEditMode)
+                          ? await CategoryService.updateCategory(
+                              CategoryModel(
+                                categoryName: selectedName,
+                                categoryColor: selectedColor.hex,
+                                categoryIcon: defaultIcon.codePoint,
+                                isExpense: widget.isExpense,
+                                id: widget.categoryId,
+                              ),
+                            )
+                          : await CategoryService.createCategory(
+                              CategoryModel(
+                                categoryName: selectedName,
+                                categoryColor: selectedColor.hex,
+                                categoryIcon: defaultIcon.codePoint,
+                                isExpense: widget.isExpense,
+                              ),
+                            );
                       if (context.mounted) {
                         Navigator.pop(context);
                       }
                     } else {
                       setState(() {});
                     }
-                    // widget.isExpense
-                    // selectedColor
-                    // defaultIcon
-                    // selectedName
-                    // isValidCategoryName
                   },
                   child: (isClickedCategorySavedButton)
                       ? Center(child: CircularProgressIndicator())
@@ -473,7 +482,9 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                           ),
                           child: icons.Center(
                             child: Text(
-                              'Save ${(widget.isExpense) ? 'Expense' : 'Income'} Category',
+                              (widget.isEditMode)
+                                  ? 'Update'
+                                  : 'Save ${(widget.isExpense) ? 'Expense' : 'Income'} Category',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,

@@ -10,6 +10,7 @@ class TransactionCard extends StatelessWidget {
   final IconData categoryIcon;
   final bool isExpense;
   final Color categoryColor;
+  final Color bgColor;
   const TransactionCard({
     super.key,
     required this.title,
@@ -19,6 +20,7 @@ class TransactionCard extends StatelessWidget {
     required this.categoryIcon,
     required this.isExpense,
     required this.categoryColor,
+    this.bgColor = AppColors.surfaceVariant,
   });
 
   @override
@@ -27,7 +29,7 @@ class TransactionCard extends StatelessWidget {
       padding: EdgeInsets.all(CustomSize.defaultPadding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        color: AppColors.surfaceVariant,
+        color: bgColor,
         border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
