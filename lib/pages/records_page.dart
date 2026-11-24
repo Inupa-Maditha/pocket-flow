@@ -17,8 +17,21 @@ class RecordsPage extends StatefulWidget {
 
 class _RecordsPageState extends State<RecordsPage> {
   late Future<List<dynamic>> recordsFuture;
+  int _refreshCount = 0;
 
-  Future<List<Map<String, dynamic>>> getMonthlyTransactionbjectData() async {
+  Future<void> _refresh() async {
+    setState(() => _refreshCount++);
+    await Future.delayed(const Duration(milliseconds: 600));
+  }
+
+  Future<void> _reload() async {
+    setState(() {
+      recordsFuture = getData();
+    });
+    await recordsFuture;
+  }
+
+  Future<List<Map<String, dynamic>>> getMonthlyTransactionObjectData() async {
     final List<TransactionModel> models =
         await TransactionService.getTransactionByDateRange(
           DateTime(DateTime.now().year, DateTime.now().month, 1, 0, 0),
@@ -43,7 +56,8 @@ class _RecordsPageState extends State<RecordsPage> {
   }
 
   Future<List> getData() async {
-    final List<Map<String, dynamic>> transaction = await getMonthlyTransactionbjectData();
+    final List<Map<String, dynamic>> transaction =
+        await getMonthlyTransactionObjectData();
     final List<Map<String, dynamic>> expenses = await getCategoriesObjectData(true);
     final List<Map<String, dynamic>> incomes = await getCategoriesObjectData(false);
     final Map<String, Map<String, dynamic>> summary = {};
@@ -54,11 +68,8 @@ class _RecordsPageState extends State<RecordsPage> {
 
     for (final item in transaction) {
       final categoryId = item['categoryId'];
-
       if (!summary.containsKey(categoryId)) continue;
-
       summary[categoryId]!['count']++;
-
       summary[categoryId]!['amount'] += (item['transactionAmount'] as num).toDouble();
     }
 
@@ -99,64 +110,67 @@ class _RecordsPageState extends State<RecordsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: recordsFuture,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong'));
-        }
-        if (!snapshot.hasData) {
-          return const Center(child: Text('No Data Available'));
-        }
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: FutureBuilder<List<dynamic>>(
+        future: recordsFuture,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Something went wrong'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('No Data Available'));
+          }
 
-        final incomeDataMap = snapshot.data![0] as List<Map<String, dynamic>>;
-        final expenseDataMap = snapshot.data![1] as List<Map<String, dynamic>>;
+          final incomeDataMap = snapshot.data![0] as List<Map<String, dynamic>>;
+          final expenseDataMap = snapshot.data![1] as List<Map<String, dynamic>>;
 
-        return DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(44),
-                child: Container(
-                  height: 68,
-                  margin: const EdgeInsets.all(CustomSize.defaultPadding),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryContainer,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                    border: Border.all(color: AppColors.border, width: 1),
-                  ),
-                  child: TabBar(
-                    tabs: [
-                      Tab(icon: Icon(Icons.trending_up_rounded), text: 'Income'),
-                      Tab(icon: Icon(Icons.trending_down_rounded), text: 'Expenses'),
-                    ],
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
-                      border: Border.all(color: AppColors.border),
+          return DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(44),
+                  child: Container(
+                    height: 68,
+                    margin: const EdgeInsets.all(CustomSize.defaultPadding),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryContainer,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: AppColors.border, width: 1),
                     ),
-                    indicatorAnimation: TabIndicatorAnimation.elastic,
-                    labelColor: AppColors.surface,
-                    unselectedLabelColor: AppColors.textPrimary,
-                    dividerColor: Colors.transparent,
+                    child: TabBar(
+                      tabs: [
+                        Tab(icon: Icon(Icons.trending_up_rounded), text: 'Income'),
+                        Tab(icon: Icon(Icons.trending_down_rounded), text: 'Expenses'),
+                      ],
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicator: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      indicatorAnimation: TabIndicatorAnimation.elastic,
+                      labelColor: AppColors.surface,
+                      unselectedLabelColor: AppColors.textPrimary,
+                      dividerColor: Colors.transparent,
+                    ),
                   ),
                 ),
               ),
+              body: TabBarView(
+                children: [
+                  IncomeRecordPage(dataList: incomeDataMap, onRefresh: _reload),
+                  ExpensesRecordPage(dataList: expenseDataMap, onRefresh: _reload),
+                ],
+              ),
             ),
-            body: TabBarView(
-              children: [
-                IncomeRecordPage(dataList: incomeDataMap),
-                ExpensesRecordPage(dataList: expenseDataMap),
-              ],
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

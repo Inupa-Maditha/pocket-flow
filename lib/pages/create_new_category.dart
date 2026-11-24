@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart' as icons;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pocket_flow/constants/app_theme.dart';
 import 'package:pocket_flow/constants/icons_and_colors.dart';
 import 'package:pocket_flow/constants/paddings.dart';
@@ -10,12 +11,12 @@ import 'package:pocket_flow/services/category_service.dart';
 class CreateNewCategory extends StatefulWidget {
   final bool isExpense;
   final bool isEditMode;
-  final String? categoryId;
+  final Map<String, dynamic>? selectedCategoryData;
   const CreateNewCategory({
     super.key,
     required this.isExpense,
     this.isEditMode = false,
-    this.categoryId,
+    this.selectedCategoryData,
   });
 
   @override
@@ -29,7 +30,6 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
   late String selectedName;
   late Color selectedColor;
   late IconData defaultIcon;
-  late Color selectedIconColor;
   late bool isValidCategoryName;
   late bool isClickedCategorySavedButton;
   late List<IconData> customIcons;
@@ -138,9 +138,20 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
   @override
   void initState() {
     super.initState();
-    selectedColor = Colors.black;
-    defaultIcon = Icons.help_outline;
-    selectedName = 'Category Name';
+    if (widget.selectedCategoryData != null && widget.isEditMode) {
+      selectedColor = Color(int.parse('0xff${widget.selectedCategoryData!['color']}'));
+      selectedIcon = IconData(
+        widget.selectedCategoryData!['icon'],
+        fontFamily: 'MaterialIcons',
+      );
+      defaultIcon = selectedIcon!;
+      selectedName = widget.selectedCategoryData!['title'];
+      categoryNameController.text = widget.selectedCategoryData!['title'];
+    } else {
+      selectedColor = Colors.black;
+      defaultIcon = Icons.help_outline;
+      selectedName = 'Category Name';
+    }
     isValidCategoryName = true;
     isClickedCategorySavedButton = false;
     customIcons = (widget.isExpense)
@@ -156,7 +167,11 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
     double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text((widget.isEditMode) ? 'Edit Category' : 'Create New Category'),
+        title: Text(
+          (widget.selectedCategoryData != null && widget.isEditMode)
+              ? 'Edit Category'
+              : 'Create New Category',
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -423,48 +438,62 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                 ),
                 child: InkWell(
                   onTap: () async {
+                    bool status;
                     isValidCategoryName = RegExp(
                       r'^[a-zA-Z0-9_ -]+$',
                     ).hasMatch(categoryNameController.text.trim());
                     if (isValidCategoryName) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Category saved'),
-                          backgroundColor: Colors.green,
-                          duration: const Duration(seconds: 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(AppRadius.sm),
-                              topRight: Radius.circular(AppRadius.sm),
-                            ),
-                          ),
-                        ),
-                      );
                       selectedName = categoryNameController.text.trim();
                       setState(() {
                         isClickedCategorySavedButton = true;
                       });
-                      await Future.delayed(const Duration(seconds: 2));
-                      (widget.isEditMode)
-                          ? await CategoryService.updateCategory(
-                              CategoryModel(
-                                categoryName: selectedName,
-                                categoryColor: selectedColor.hex,
-                                categoryIcon: defaultIcon.codePoint,
-                                isExpense: widget.isExpense,
-                                id: widget.categoryId,
+                      if (widget.selectedCategoryData != null && widget.isEditMode) {
+                        status = await CategoryService.updateCategory(
+                          CategoryModel(
+                            categoryName: selectedName,
+                            categoryColor: selectedColor.hex,
+                            categoryIcon: defaultIcon.codePoint,
+                            isExpense: widget.isExpense,
+                            id: widget.selectedCategoryData!['id'],
+                          ),
+                        );
+                      } else {
+                        status = await CategoryService.createCategory(
+                          CategoryModel(
+                            categoryName: selectedName,
+                            categoryColor: selectedColor.hex,
+                            categoryIcon: defaultIcon.codePoint,
+                            isExpense: widget.isExpense,
+                          ),
+                        );
+                      }
+                      if (context.mounted && status) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Category ${(widget.selectedCategoryData != null && widget.isEditMode) ? 'updated' : 'saved'}',
+                            ),
+                            backgroundColor: Colors.green,
+                            duration: const Duration(seconds: 1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(AppRadius.sm),
+                                topRight: Radius.circular(AppRadius.sm),
                               ),
-                            )
-                          : await CategoryService.createCategory(
-                              CategoryModel(
-                                categoryName: selectedName,
-                                categoryColor: selectedColor.hex,
-                                categoryIcon: defaultIcon.codePoint,
-                                isExpense: widget.isExpense,
-                              ),
-                            );
-                      if (context.mounted) {
+                            ),
+                          ),
+                        );
                         Navigator.pop(context);
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: 'ERROR: somthing went wrong',
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.TOP,
+                          timeInSecForIosWeb: 3,
+                          backgroundColor: AppColors.expenseContainer,
+                          textColor: AppColors.expense,
+                          fontSize: 16.0,
+                        );
                       }
                     } else {
                       setState(() {});
@@ -482,7 +511,7 @@ class _CreateNewCategoryState extends State<CreateNewCategory> {
                           ),
                           child: icons.Center(
                             child: Text(
-                              (widget.isEditMode)
+                              (widget.selectedCategoryData != null && widget.isEditMode)
                                   ? 'Update'
                                   : 'Save ${(widget.isExpense) ? 'Expense' : 'Income'} Category',
                               style: TextStyle(

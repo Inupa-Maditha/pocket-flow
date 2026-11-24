@@ -24,8 +24,22 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
   List<Map<String, dynamic>> displayTransactions = [];
 
   DateTimeRange selectedDateRange = DateTimeRange(
-    start: DateTime(DateTime.now().year, DateTime.now().month - 1, DateTime.now().day),
-    end: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+    start: DateTime(
+      DateTime.now().year,
+      DateTime.now().month - 1,
+      DateTime.now().day,
+      0,
+      0,
+      0,
+    ),
+    end: DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+      23,
+      59,
+      59,
+    ),
   );
 
   Widget trxSelector(double deviceWidth, int componentID, String title, IconData? icon) {
@@ -119,7 +133,7 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
   }
 
   Future<void> dateRangePicker() async {
-    final DateTimeRange? result = await showDateRangePicker(
+    final DateTimeRange? date = await showDateRangePicker(
       context: context,
       firstDate: DateTime(
         DateTime.now().year - 1,
@@ -128,9 +142,12 @@ class _TransactionFilterDashBoardState extends State<TransactionFilterDashBoard>
       ),
       lastDate: DateTime.now(),
     );
-    if (result != null) {
+    if (date != null) {
       setState(() {
-        selectedDateRange = result;
+        selectedDateRange = DateTimeRange(
+          start: DateTime(date.start.year, date.start.month, date.start.day, 0, 0, 0),
+          end: DateTime(date.end.year, date.end.month, date.end.day, 23, 59, 59),
+        );
       });
     }
   }

@@ -7,24 +7,18 @@ import 'package:pocket_flow/widgets/income_expense_category_card.dart';
 
 class IncomeRecordPage extends StatefulWidget {
   final List<Map<String, dynamic>> dataList;
-  const IncomeRecordPage({super.key, required this.dataList});
+  final Future<void> Function() onRefresh;
+  const IncomeRecordPage({super.key, required this.dataList, required this.onRefresh});
 
   @override
   State<IncomeRecordPage> createState() => _IncomeRecordPageState();
 }
 
 class _IncomeRecordPageState extends State<IncomeRecordPage> {
-  int _refreshCount = 0;
-
-  Future<void> _refresh() async {
-    setState(() => _refreshCount++);
-    await Future.delayed(const Duration(milliseconds: 600));
-  }
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: _refresh,
+      onRefresh: widget.onRefresh,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: CustomSize.defaultPadding),
         child: SingleChildScrollView(
@@ -51,7 +45,7 @@ class _IncomeRecordPageState extends State<IncomeRecordPage> {
                 padding: EdgeInsets.only(bottom: CustomSize.defaultPadding),
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  final selectedData = widget.dataList[index];
+                  final Map<String, dynamic> selectedData = widget.dataList[index];
                   return InkWell(
                     onLongPress: () async {
                       await Navigator.push(
@@ -60,14 +54,13 @@ class _IncomeRecordPageState extends State<IncomeRecordPage> {
                           builder: (context) => CreateNewCategory(
                             isExpense: false,
                             isEditMode: true,
-                            categoryId: selectedData['id'],
+                            selectedCategoryData: selectedData,
                           ),
                         ),
                       );
-                      if (mounted) setState(() => _refreshCount++);
+                      await widget.onRefresh();
                     },
                     child: IncomeExpenseCategoryCard(
-                      key: ValueKey('icc$_refreshCount'),
                       isIncome: true,
                       ammount: (selectedData['amount'] as double).toStringAsFixed(2),
                       transactionCount: selectedData['count'].toString(),

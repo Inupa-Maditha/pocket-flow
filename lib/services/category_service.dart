@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_flow/models/category_model.dart';
+import 'package:pocket_flow/services/transaction_service.dart';
 
 class CategoryService {
   static CollectionReference<Map<String, dynamic>> get _path {
@@ -79,6 +80,10 @@ class CategoryService {
 
   static Future<bool> deleteCategory(String id) async {
     try {
+      final list = await TransactionService.getTransactionByCategoryID(id)!.first;
+      for (var element in list) {
+        await TransactionService.deleteTransaction(element.transactionId!);
+      }
       await _path.doc(id).delete();
       return true;
     } catch (e) {

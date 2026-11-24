@@ -502,13 +502,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                                 isTitleValid = (_titleControllar.text.isEmpty)
                                     ? false
                                     : true;
-                                isAmountValid =
-                                    (_amountControllar.text.isEmpty &&
-                                        !RegExp(
-                                          r'^[0-9]+$',
-                                        ).hasMatch(_amountControllar.text))
-                                    ? false
-                                    : true;
+                                isAmountValid = RegExp(
+                                  r'^\d+(\.\d{1,2})?$',
+                                ).hasMatch(_amountControllar.text.trim());
                                 isTimeValid = (selectTime.isAfter(dateTime))
                                     ? false
                                     : true;
