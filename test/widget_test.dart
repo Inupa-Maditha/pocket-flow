@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:pocket_flow/main.dart';
 
+// flutter test ./test/file_name_test.dart
+
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
@@ -26,5 +28,38 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
+  });
+
+  // UNIT TESTS
+
+  setUp(() {
+    // this_code_runs_before_every_test_functions
+  });
+  setUpAll(() {
+    // this_code_runs_only_one_time_before_all_test_functions
+  });
+  tearDown(() {
+    // this_code_runs_after_every_test_functions
+    // inverse_of_setup_function
+  });
+  tearDownAll(() {
+    // this_code_runs_only_one_time_after_all_test_functions
+    // inverse_of_teardown_function
+  });
+  test('description_for_expected_result', () {
+    expect('find_value', 'expected_value');
+  });
+
+  // TEST GROUP OF TESTS
+  group('description_for_expected_resultS', () {
+    test('description_for_expected_result', () {
+      expect('find_value', 'expected_value');
+    });
+    test('description_for_expected_result', () {
+      expect('find_value', 'expected_value');
+    });
+    test('description_for_expected_result', () {
+      expect('find_value', 'expected_value');
+    });
   });
 }
